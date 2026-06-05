@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portafolio — Taller de Herrería</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --black:    #0D0D0D;
+    --charcoal: #1A1A1A;
+    --steel:    #242424;
+    --iron:     #2E2E2E;
+    --mid:      #3D3D3D;
+    --muted:    #6B6B6B;
+    --ash:      #999999;
+    --light:    #C8C8C8;
+    --white:    #F0EDE8;
+    --orange:   #D4500A;
+  }
+  body { font-family: 'IBM Plex Sans', sans-serif; background: var(--black); color: var(--white); font-size: 15px; line-height: 1.7; }
+
+  /* LOADING */
+  #loading-screen { position: fixed; inset: 0; background: var(--black); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.5rem; z-index: 9999; transition: opacity 0.4s ease; }
+  #loading-screen.hidden { opacity: 0; pointer-events: none; }
+  .loader-icon { font-size: 2.5rem; animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loader-text { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--orange); }
+
+  /* ERROR */
+  #error-banner { display: none; background: #3a0000; border: 1px solid #a00; color: #ffaaaa; font-family: 'IBM Plex Mono', monospace; font-size: 12px; padding: 1rem 2rem; text-align: center; line-height: 1.6; }
+
+  /* PORTADA */
+  .cover { min-height: 100vh; display: flex; flex-direction: column; justify-content: flex-end; position: relative; overflow: hidden; border-bottom: 2px solid var(--orange); }
+  .cover-grid { position: absolute; inset: 0; background-image: linear-gradient(var(--iron) 1px, transparent 1px), linear-gradient(90deg, var(--iron) 1px, transparent 1px); background-size: 60px 60px; opacity: 0.3; }
+  .cover-stripe { position: absolute; top: 0; left: 0; width: 8px; height: 100%; background: var(--orange); }
+  .cover-bg-letter { position: absolute; bottom: -3rem; right: -2rem; font-family: 'Bebas Neue', sans-serif; font-size: 30rem; color: var(--charcoal); line-height: 1; user-select: none; pointer-events: none; }
+  .cover-content { position: relative; padding: 4rem 5rem 5rem 6rem; }
+  .cover-eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--orange); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 14px; }
+  .cover-eyebrow::before { content: ''; width: 32px; height: 2px; background: var(--orange); }
+  .cover-word { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem, 8vw, 6.5rem); color: var(--ash); line-height: 0.9; letter-spacing: 0.04em; display: block; }
+  .cover-name { font-family: 'Bebas Neue', sans-serif; font-size: clamp(4rem, 11vw, 10rem); color: var(--orange); line-height: 0.85; letter-spacing: 0.03em; display: block; margin-bottom: 3rem; }
+  .cover-divider { height: 1px; background: var(--iron); margin-bottom: 2.5rem; }
+  .cover-info-row { display: flex; flex-wrap: wrap; }
+  .cover-info-item { padding-right: 3rem; margin-right: 3rem; border-right: 1px solid var(--iron); }
+  .cover-info-item:last-child { border-right: none; margin-right: 0; padding-right: 0; }
+  .info-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--orange); margin-bottom: 5px; }
+  .info-value { font-size: 16px; font-weight: 500; color: var(--light); }
+
+  /* SECCIÓN */
+  .works-section { padding: 5rem 5rem 6rem 6rem; position: relative; }
+  .works-section::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--orange); }
+  .works-header { display: flex; align-items: flex-end; gap: 2rem; margin-bottom: 3rem; border-bottom: 1px solid var(--iron); padding-bottom: 2rem; }
+  .works-num { font-family: 'Bebas Neue', sans-serif; font-size: 5rem; color: var(--iron); line-height: 1; flex-shrink: 0; }
+  .works-tag { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--orange); margin-bottom: 5px; }
+  .works-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 5vw, 4rem); letter-spacing: 0.04em; color: var(--white); line-height: 1; }
+
+  /* WORK ITEM */
+  .work-item { display: grid; grid-template-columns: 260px 1fr; border: 1px solid var(--iron); margin-bottom: 2px; transition: border-color 0.2s; }
+  .work-item:hover { border-color: var(--orange); }
+
+  /* CARRUSEL */
+  .work-carousel { position: relative; background: var(--steel); border-right: 1px solid var(--iron); min-height: 200px; overflow: hidden; display: flex; align-items: stretch; }
+  .carousel-track { display: flex; width: 100%; transition: transform 0.35s ease; }
+  .carousel-slide { flex: 0 0 100%; width: 100%; cursor: zoom-in; overflow: hidden; }
+  .carousel-slide img { width: 100%; height: 200px; object-fit: cover; display: block; transition: transform 0.3s ease; }
+  .carousel-slide:hover img { transform: scale(1.04); }
+  .carousel-no-img { flex: 0 0 100%; width: 100%; height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--muted); }
+  .carousel-no-img span { font-size: 2rem; }
+  .carousel-no-img p { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; }
+  .carousel-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.65); border: 1px solid var(--iron); color: var(--white); font-size: 14px; width: 30px; height: 30px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 2; transition: background 0.2s, border-color 0.2s; user-select: none; }
+  .carousel-btn:hover { background: var(--orange); border-color: var(--orange); }
+  .carousel-btn.prev { left: 6px; }
+  .carousel-btn.next { right: 6px; }
+  .carousel-counter { position: absolute; bottom: 6px; right: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.15em; color: var(--ash); background: rgba(0,0,0,0.55); padding: 2px 6px; pointer-events: none; }
+
+  /* BODY */
+  .work-body { padding: 1.75rem 2rem; }
+  .work-code { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.25em; color: var(--orange); margin-bottom: 6px; }
+  .work-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 0.05em; color: var(--white); margin-bottom: 0.6rem; }
+  .work-desc { font-size: 13.5px; color: var(--ash); font-weight: 300; line-height: 1.7; margin-bottom: 1rem; max-width: 540px; }
+  .work-caption { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--muted); border-left: 2px solid var(--orange); padding-left: 10px; line-height: 1.5; }
+
+  /* LIGHTBOX */
+  #lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 8888; display: none; flex-direction: column; }
+  #lightbox.open { display: flex; }
+
+  .lb-top { position: absolute; top: 0; left: 0; right: 0; padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); z-index: 2; }
+  .lb-project-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 0.08em; color: var(--white); }
+  .lb-counter-top { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.2em; color: var(--ash); }
+  .lb-close { background: none; border: 1px solid var(--iron); color: var(--white); font-size: 18px; width: 36px; height: 36px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s, border-color 0.2s; }
+  .lb-close:hover { background: var(--orange); border-color: var(--orange); }
+
+  /* área central: flechas + imagen */
+  .lb-main { flex: 1; display: flex; align-items: center; justify-content: center; gap: 1rem; padding: 5rem 1rem 8rem; }
+  .lb-img-wrap { flex: 1; max-width: 860px; max-height: 70vh; display: flex; align-items: center; justify-content: center; }
+  #lb-img { max-width: 100%; max-height: 70vh; object-fit: contain; box-shadow: 0 0 60px rgba(0,0,0,0.8); transition: opacity 0.18s ease; }
+  #lb-img.fading { opacity: 0; }
+
+  .lb-nav { background: rgba(255,255,255,0.07); border: 1px solid var(--iron); color: var(--white); font-size: 20px; width: 48px; height: 48px; flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s, border-color 0.2s; }
+  .lb-nav:hover { background: var(--orange); border-color: var(--orange); }
+  .lb-nav:disabled { opacity: 0.2; cursor: default; pointer-events: none; }
+
+  /* descripción en lightbox — fija en la parte inferior */
+  .lb-bottom {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.92) 80%, transparent);
+    padding: 2rem 5rem 1.5rem;
+    display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
+  }
+  .lb-slide-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem; letter-spacing: 0.06em;
+    color: var(--white); text-align: center;
+    transition: opacity 0.18s ease;
+  }
+  .lb-slide-desc {
+    font-size: 13px; color: var(--ash); font-weight: 300;
+    text-align: center; max-width: 640px; line-height: 1.6;
+    transition: opacity 0.18s ease;
+  }
+  .lb-slide-caption {
+    font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+    color: var(--muted); text-align: center;
+    transition: opacity 0.18s ease;
+  }
+  .lb-slide-title.fading, .lb-slide-desc.fading, .lb-slide-caption.fading { opacity: 0; }
+
+  /* dots */
+  .lb-dots { display: flex; gap: 8px; margin-top: 0.5rem; }
+  .lb-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--mid); border: 1px solid var(--muted); cursor: pointer; transition: background 0.2s; }
+  .lb-dot.active { background: var(--orange); border-color: var(--orange); }
+
+  .lb-swipe-hint { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.2em; color: var(--muted); text-transform: uppercase; display: none; }
+
+  /* SHARE BUTTON */
+  .lb-share-btn { background: none; border: 1px solid var(--iron); color: var(--ash); font-size: 16px; width: 36px; height: 36px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s, border-color 0.2s, color 0.2s; position: relative; }
+  .lb-share-btn:hover { background: var(--iron); border-color: var(--muted); color: var(--white); }
+
+  /* SHARE MENU */
+  .lb-share-menu { position: fixed; top: 56px; right: 12px; background: var(--charcoal); border: 1px solid var(--iron); min-width: 220px; z-index: 9000; display: none; flex-direction: column; box-shadow: 0 8px 24px rgba(0,0,0,0.8); }
+  .lb-share-menu.open { display: flex; }
+  .lb-share-menu-title { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--orange); padding: 10px 14px 6px; border-bottom: 1px solid var(--iron); }
+  .lb-share-option { display: flex; align-items: center; gap: 10px; padding: 11px 14px; cursor: pointer; border: none; background: none; color: var(--light); font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; text-align: left; width: 100%; transition: background 0.15s; border-bottom: 1px solid var(--iron); }
+  .lb-share-option:last-child { border-bottom: none; }
+  .lb-share-option:hover { background: var(--iron); color: var(--white); }
+  .lb-share-option .share-icon { font-size: 16px; flex-shrink: 0; }
+  .lb-share-option .share-label { display: flex; flex-direction: column; gap: 2px; }
+  .lb-share-option .share-label strong { font-weight: 500; }
+  .lb-share-option .share-label span { font-size: 11px; color: var(--muted); font-family: 'IBM Plex Mono', monospace; }
+  .lb-share-option--wa { border-top: 1px solid #1a3a1a !important; }
+  .lb-share-option--wa:hover { background: #0d2b0d !important; color: #4cde80 !important; }
+  .lb-share-option--wa:hover .share-label span { color: #2e7d4f; }
+  .lb-share-option--wa svg { color: #25D366; }
+
+  /* TOAST */
+  .lb-toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--orange); color: var(--black); font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.15em; padding: 10px 20px; opacity: 0; pointer-events: none; transition: opacity 0.25s, transform 0.25s; z-index: 9999; white-space: nowrap; }
+  .lb-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* FOOTER */
+  .footer { background: var(--orange); padding: 1.5rem 6rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+  .footer-brand { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; color: var(--black); letter-spacing: 0.06em; }
+  .footer-tel { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--black); font-weight: 500; }
+  .footer-wa-btn { display: inline-flex; align-items: center; gap: 8px; background: var(--black); color: #fff; font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; font-weight: 500; padding: 10px 20px; text-decoration: none; transition: background 0.2s, color 0.2s; }
+  .footer-wa-btn:hover { background: #25D366; color: #000; }
+
+  @media (max-width: 680px) {
+    .cover-content { padding: 2.5rem 1.5rem 3rem 2.5rem; }
+    .works-section { padding: 3rem 1.5rem 4rem 2.5rem; }
+    .work-item { grid-template-columns: 1fr; }
+    .work-carousel { border-right: none; border-bottom: 1px solid var(--iron); }
+    .footer { padding: 1.5rem 2rem; }
+    .lb-nav { width: 38px; height: 38px; font-size: 16px; }
+    .lb-bottom { padding: 2rem 1.5rem 1.5rem; }
+    .lb-swipe-hint { display: block; }
+  }
+</style>
+</head>
+<body>
+
+<div id="loading-screen">
+  <div class="loader-icon">⚙️</div>
+  <div class="loader-text">Cargando portafolio…</div>
+</div>
+
+<div id="error-banner"></div>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" role="dialog" aria-modal="true">
+  <div class="lb-top">
+    <div id="lb-project-title" class="lb-project-title"></div>
+    <div id="lb-counter-top" class="lb-counter-top"></div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <button class="lb-share-btn" id="lb-share-btn" title="Compartir">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      </button>
+      <button class="lb-close" id="lb-close" title="Cerrar (Esc)">✕</button>
+    </div>
+  </div>
+  <!-- Share menu — fuera del botón para evitar HTML inválido -->
+  <div class="lb-share-menu" id="lb-share-menu">
+    <div class="lb-share-menu-title">Compartir</div>
+    <button class="lb-share-option" id="share-project">
+      <span class="share-icon">🗂️</span>
+      <span class="share-label">
+        <strong>Proyecto completo</strong>
+        <span>Todas las fotos del proyecto</span>
+      </span>
+    </button>
+    <button class="lb-share-option" id="share-image">
+      <span class="share-icon">🖼️</span>
+      <span class="share-label">
+        <strong>Imagen actual</strong>
+        <span>Solo la foto visible</span>
+      </span>
+    </button>
+    <button class="lb-share-option lb-share-option--wa" id="share-whatsapp">
+      <span class="share-icon">
+        <svg width="17" height="17" viewBox="0 0 32 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M16.004 2.667C8.64 2.667 2.667 8.64 2.667 16c0 2.347.613 4.587 1.773 6.56L2.667 29.333l6.987-1.733A13.267 13.267 0 0016.004 29.333C23.36 29.333 29.333 23.36 29.333 16S23.36 2.667 16.004 2.667zm0 24a10.56 10.56 0 01-5.387-1.48l-.387-.227-4.147 1.027 1.053-3.973-.253-.4A10.613 10.613 0 015.333 16c0-5.88 4.787-10.667 10.667-10.667S26.667 10.12 26.667 16 21.88 26.667 16.004 26.667zm5.853-7.987c-.32-.16-1.893-.933-2.187-1.04-.293-.107-.507-.16-.72.16-.213.32-.827 1.04-.987 1.253-.173.213-.347.24-.653.08-.32-.16-1.333-.493-2.547-1.573-.947-.84-1.587-1.88-1.773-2.2-.187-.32-.013-.493.147-.653.147-.147.32-.373.48-.56.16-.187.213-.32.32-.533.107-.213.053-.4-.027-.56-.08-.16-.72-1.733-.987-2.373-.253-.613-.52-.533-.72-.547h-.613c-.213 0-.56.08-.853.4-.293.32-1.12 1.093-1.12 2.667s1.147 3.093 1.307 3.307c.16.213 2.253 3.44 5.467 4.827.76.333 1.36.533 1.827.68.76.24 1.453.213 2 .133.613-.093 1.893-.773 2.16-1.52.267-.747.267-1.387.187-1.52-.08-.133-.293-.213-.613-.373z"/></svg>
+      </span>
+      <span class="share-label">
+        <strong>Enviar a mi WhatsApp</strong>
+        <span id="wa-num-label">Enviármelo directamente</span>
+      </span>
+    </button>
+  </div>
+
+  <div class="lb-main">
+    <button class="lb-nav" id="lb-prev">&#8592;</button>
+    <div class="lb-img-wrap">
+      <img id="lb-img" src="" alt="">
+    </div>
+    <button class="lb-nav" id="lb-next">&#8594;</button>
+  </div>
+
+  <div class="lb-bottom">
+    <div id="lb-slide-title" class="lb-slide-title"></div>
+    <div id="lb-slide-desc"  class="lb-slide-desc"></div>
+    <div id="lb-slide-caption" class="lb-slide-caption"></div>
+    <div class="lb-dots" id="lb-dots"></div>
+    <div class="lb-swipe-hint">desliza para navegar</div>
+  </div>
+</div>
+<div class="lb-toast" id="lb-toast"></div>
+
+<!-- PORTADA -->
+<section class="cover">
+  <div class="cover-grid"></div>
+  <div class="cover-stripe"></div>
+  <div class="cover-bg-letter">H</div>
+  <div class="cover-content">
+    <div class="cover-eyebrow">Portafolio Profesional · Herrería y Metal</div>
+    <span class="cover-word">Taller</span>
+    <span id="taller-nombre" class="cover-name">…</span>
+    <div class="cover-divider"></div>
+    <div class="cover-info-row">
+      <div class="cover-info-item">
+        <div class="info-label">Propietario</div>
+        <div id="taller-propietario" class="info-value">…</div>
+      </div>
+      <div class="cover-info-item">
+        <div class="info-label">Taller</div>
+        <div id="taller-nombre2" class="info-value">…</div>
+      </div>
+      <div class="cover-info-item">
+        <div class="info-label">Teléfono</div>
+        <div id="taller-telefono" class="info-value">…</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRABAJOS -->
+<section class="works-section">
+  <div class="works-header">
+    <div class="works-num">02</div>
+    <div>
+      <div class="works-tag">// Galería de proyectos</div>
+      <div class="works-title">Trabajos Realizados</div>
+    </div>
+  </div>
+  <div id="works-container"></div>
+</section>
+
+<footer class="footer">
+  <div id="footer-brand" class="footer-brand">…</div>
+  <a id="footer-wa-btn" class="footer-wa-btn" href="#" target="_blank" rel="noopener">
+    <svg width="17" height="17" viewBox="0 0 32 32" fill="currentColor"><path d="M16.004 2.667C8.64 2.667 2.667 8.64 2.667 16c0 2.347.613 4.587 1.773 6.56L2.667 29.333l6.987-1.733A13.267 13.267 0 0016.004 29.333C23.36 29.333 29.333 23.36 29.333 16S23.36 2.667 16.004 2.667zm0 24a10.56 10.56 0 01-5.387-1.48l-.387-.227-4.147 1.027 1.053-3.973-.253-.4A10.613 10.613 0 015.333 16c0-5.88 4.787-10.667 10.667-10.667S26.667 10.12 26.667 16 21.88 26.667 16.004 26.667zm5.853-7.987c-.32-.16-1.893-.933-2.187-1.04-.293-.107-.507-.16-.72.16-.213.32-.827 1.04-.987 1.253-.173.213-.347.24-.653.08-.32-.16-1.333-.493-2.547-1.573-.947-.84-1.587-1.88-1.773-2.2-.187-.32-.013-.493.147-.653.147-.147.32-.373.48-.56.16-.187.213-.32.32-.533.107-.213.053-.4-.027-.56-.08-.16-.72-1.733-.987-2.373-.253-.613-.52-.533-.72-.547h-.613c-.213 0-.56.08-.853.4-.293.32-1.12 1.093-1.12 2.667s1.147 3.093 1.307 3.307c.16.213 2.253 3.44 5.467 4.827.76.333 1.36.533 1.827.68.76.24 1.453.213 2 .133.613-.093 1.893-.773 2.16-1.52.267-.747.267-1.387.187-1.52-.08-.133-.293-.213-.613-.373z"/></svg>
+    Escríbeme por WhatsApp
+  </a>
+</footer>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   CONFIGURACIÓN
+   ───────────────────────────────────────────────────────────────────
+   1. Archivo → Compartir → Publicar en la web → CSV → copiar enlace
+   2. Pegarlo en SHEET_CSV_URL
+
+   ESTRUCTURA DE LA HOJA (fila 1 = encabezados, ignorada):
+   ┌─────────┬───────┬──────────────────┬─────────────┬──────────────┬──────────────────────────┐
+   │ tipo    │ clave │ titulo           │ descripcion │ pie_foto     │ foto_url                 │
+   ├─────────┼───────┼──────────────────┼─────────────┼──────────────┼──────────────────────────┤
+   │ info    │ nombre_taller │ Herrería XYZ  │         │              │                          │
+   │ info    │ propietario   │ Juan Pérez    │         │              │                          │
+   │ info    │ telefono      │ 809-000-0000  │         │              │                          │
+   │ trabajo │ 1     │ Portón vehicular  │ Desc...     │ Pie de foto  │ https://url-de-imagen    │
+   │ trabajo │ 1     │ Vista interior    │ Desc...     │ Detalle...   │ https://url-de-imagen    │
+   │ trabajo │ 1     │ Herraje cierre    │ Desc...     │ Detalle...   │ https://url-de-imagen    │
+   │ trabajo │ 2     │ Reja de ventana   │ Desc...     │ Pie de foto  │ https://url-de-imagen    │
+   └─────────┴───────┴──────────────────┴─────────────┴──────────────┴──────────────────────────┘
+
+   Filas con la misma CLAVE se agrupan en un solo card.
+   - El card muestra el título/descripción de la PRIMERA fila del grupo.
+   - El carrusel incluye TODAS las fotos del grupo.
+   - Al abrir el lightbox, cada foto muestra su propio título, descripción y pie.
+   - Una foto por fila (columna F). Sin pipes, sin complicaciones.
+   ═══════════════════════════════════════════════════════════════════ */
+
+const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT0EsypMcIaENuPPyaYiEEdf9u40np7EU5tpPdKSD86PYMzs4LPxUg9jA5_Asle8vG3XVUsHFW8nhvb/pub?output=csv';
+
+/* ── CSV parser ─────────────────────────────────────────────────── */
+function parseCSV(text) {
+  const lines = text.trim().split(/\r?\n/);
+  return lines.slice(1).map(line => {
+    const cols = []; let cur = '', inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (c === '"') { inQ = !inQ; }
+      else if (c === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
+      else { cur += c; }
+    }
+    cols.push(cur.trim());
+    return cols;
+  });
+}
+
+function escH(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ── Agrupar filas por clave ────────────────────────────────────── */
+function groupWorks(rows) {
+  const map   = new Map(); // clave → { firstRow, slides[] }
+  const order = [];        // mantiene orden de aparición
+
+  for (const row of rows) {
+    const tipo = (row[0] || '').toLowerCase().trim();
+    if (tipo !== 'trabajo') continue;
+
+    const clave = (row[1] || '').trim();
+    if (!clave) continue;
+
+    const slide = {
+      titulo : row[2] || '',
+      desc   : row[3] || '',
+      pie    : row[4] || '',
+      foto   : (row[5] || '').trim()
+    };
+
+    if (!map.has(clave)) {
+      map.set(clave, { clave, first: slide, slides: [] });
+      order.push(clave);
+    }
+    if (slide.foto) map.get(clave).slides.push(slide);
+  }
+
+  return order.map(k => map.get(k));
+}
+
+/* ── Render de un card agrupado ─────────────────────────────────── */
+function renderWork(group, cardNum) {
+  const { clave, first, slides } = group;
+  const id   = `car-${clave.replace(/\s+/g,'-')}`;
+  const code = `// PROYECTO-${String(cardNum).padStart(2,'0')}`;
+
+  let carouselHTML;
+  if (slides.length === 0) {
+    carouselHTML = `
+      <div class="work-carousel">
+        <div class="carousel-track">
+          <div class="carousel-no-img"><span>📷</span><p>Sin fotos aún</p></div>
+        </div>
+      </div>`;
+  } else {
+    const slidesHTML = slides.map((s, i) => `
+      <div class="carousel-slide" data-idx="${i}">
+        <img src="${escH(s.foto)}" alt="${escH(s.titulo)}" loading="lazy">
+      </div>`).join('');
+
+    const btns = slides.length > 1 ? `
+      <button class="carousel-btn prev" data-id="${id}">&#8592;</button>
+      <button class="carousel-btn next" data-id="${id}">&#8594;</button>
+      <div class="carousel-counter" id="${id}-counter">1 / ${slides.length}</div>` : '';
+
+    carouselHTML = `
+      <div class="work-carousel" id="${id}" data-index="0" data-total="${slides.length}">
+        <div class="carousel-track" id="${id}-track">${slidesHTML}</div>
+        ${btns}
+      </div>`;
+  }
+
+  return `
+  <div class="work-item" id="proyecto-${encodeURIComponent(clave)}" data-clave="${escH(clave)}" data-cardnum="${cardNum}">
+    ${carouselHTML}
+    <div class="work-body">
+      <div class="work-code" id="${id}-code">${escH(code)}</div>
+      <div class="work-title" id="${id}-title">${escH(slides[0]?.titulo || '')}</div>
+      <div class="work-desc" id="${id}-desc">${escH(slides[0]?.desc || first.desc)}</div>
+      <div class="work-caption" id="${id}-caption">${escH(slides[0]?.pie || first.pie)}</div>
+    </div>
+  </div>`;
+}
+
+/* ── Carruseles ─────────────────────────────────────────────────── */
+// Mapa global: carouselId → slides[] (para pasar al lightbox)
+const carouselData = {};
+
+function initCarousels(groups) {
+  // Poblar mapa de datos
+  groups.forEach(g => {
+    const id = `car-${g.clave.replace(/\s+/g,'-')}`;
+    carouselData[id] = g.slides;
+  });
+
+  // Flechas
+  document.querySelectorAll('.carousel-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id    = btn.dataset.id;
+      const car   = document.getElementById(id);
+      const track = document.getElementById(`${id}-track`);
+      let idx     = parseInt(car.dataset.index);
+      const total = parseInt(car.dataset.total);
+      idx = btn.classList.contains('prev') ? (idx - 1 + total) % total : (idx + 1) % total;
+      moveCarousel(car, track, id, idx, total);
+    });
+  });
+
+  // Click → lightbox (abre en la foto visible actualmente)
+  document.querySelectorAll('.work-carousel').forEach(car => {
+    car.querySelector('.carousel-track')?.addEventListener('click', () => {
+      const id     = car.id;
+      const slides = carouselData[id];
+      if (!slides || slides.length === 0) return;
+      const idx    = parseInt(car.dataset.index) || 0;
+      const item       = car.closest('[data-cardnum]');
+      const cardNum    = item ? item.dataset.cardnum : '';
+      const projectTitle = `// PROYECTO-${String(cardNum).padStart(2,'0')}`;
+      const clave = car.closest('[data-clave]')?.dataset.clave || id.replace('car-', '');
+      openLightbox(slides, projectTitle, idx, clave);
+    });
+  });
+
+}
+
+
+function moveCarousel(car, track, id, idx, total) {
+  car.dataset.index = idx;
+  track.style.transform = `translateX(-${idx * 100}%)`;
+  const counter = document.getElementById(`${id}-counter`);
+  if (counter) counter.textContent = `${idx + 1} / ${total}`;
+  // Actualizar texto del card según la foto visible
+  const slides  = carouselData[id];
+  const caption = document.getElementById(`${id}-caption`);
+  const titleEl = document.getElementById(`${id}-title`);
+  const descEl  = document.getElementById(`${id}-desc`);
+  const codeEl  = document.getElementById(`${id}-code`);
+  if (slides && slides[idx]) {
+    if (titleEl)  titleEl.textContent  = slides[idx].titulo || '';
+    if (descEl)   descEl.textContent   = slides[idx].desc   || '';
+    if (caption)  caption.textContent  = slides[idx].pie    || '';
+  }
+  if (codeEl) {
+    const item = car.closest('[data-cardnum]');
+    const num  = item ? item.dataset.cardnum : '';
+    codeEl.textContent = `// PROYECTO-${String(num).padStart(2,'0')}`;
+  }
+}
+
+/* ── Lightbox ───────────────────────────────────────────────────── */
+let lbSlides  = [];   // array de { titulo, desc, pie, foto }
+let lbCurrent = 0;
+let lbClave   = '';   // clave del proyecto abierto
+
+function openLightbox(slides, projectTitle, startIdx, clave) {
+  lbSlides  = slides;
+  lbCurrent = startIdx;
+  lbClave   = clave || '';
+  document.getElementById('lb-project-title').textContent = projectTitle;
+  buildDots();
+  showLbSlide(lbCurrent, false);
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  if (lbClave) history.replaceState(null, '', '#proyecto-' + encodeURIComponent(lbClave));
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+  history.replaceState(null, '', window.location.pathname + window.location.search);
+}
+
+function showLbSlide(idx, animate) {
+  const slide = lbSlides[idx];
+  const img   = document.getElementById('lb-img');
+  const elT   = document.getElementById('lb-slide-title');
+  const elD   = document.getElementById('lb-slide-desc');
+  const elC   = document.getElementById('lb-slide-caption');
+
+  if (animate) {
+    img.classList.add('fading');
+    elT.classList.add('fading'); elD.classList.add('fading'); elC.classList.add('fading');
+    setTimeout(() => {
+      img.src      = slide.foto;
+      elT.textContent = slide.titulo;
+      elD.textContent = slide.desc;
+      elC.textContent = slide.pie;
+      img.classList.remove('fading');
+      elT.classList.remove('fading'); elD.classList.remove('fading'); elC.classList.remove('fading');
+    }, 180);
+  } else {
+    img.src         = slide.foto;
+    elT.textContent = slide.titulo;
+    elD.textContent = slide.desc;
+    elC.textContent = slide.pie;
+  }
+
+  document.getElementById('lb-counter-top').textContent = `${idx + 1} / ${lbSlides.length}`;
+  document.getElementById('lb-prev').disabled = (idx === 0);
+  document.getElementById('lb-next').disabled = (idx === lbSlides.length - 1);
+  document.querySelectorAll('.lb-dot').forEach((d,i) => d.classList.toggle('active', i === idx));
+  lbCurrent = idx;
+}
+
+function buildDots() {
+  const wrap = document.getElementById('lb-dots');
+  wrap.innerHTML = lbSlides.map((_,i) =>
+    `<div class="lb-dot${i===lbCurrent?' active':''}" data-i="${i}"></div>`).join('');
+  wrap.querySelectorAll('.lb-dot').forEach(d =>
+    d.addEventListener('click', () => showLbSlide(parseInt(d.dataset.i), true)));
+}
+
+/* ── Share helpers ──────────────────────────────────────────────── */
+function showToast(msg) {
+  const t = document.getElementById('lb-toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function copyToClipboard(text) {
+  // Intenta clipboard API moderna, si falla usa execCommand
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast('✓ ENLACE COPIADO AL PORTAPAPELES');
+    }).catch(() => fallbackCopy(text));
+  } else {
+    fallbackCopy(text);
+  }
+}
+
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;left:-9999px;top:-9999px;opacity:0';
+  document.body.appendChild(ta);
+  ta.focus(); ta.select();
+  try {
+    document.execCommand('copy');
+    showToast('✓ ENLACE COPIADO AL PORTAPAPELES');
+  } catch(e) {
+    showToast('⚠ NO SE PUDO COPIAR');
+  }
+  document.body.removeChild(ta);
+}
+
+function shareData(data) {
+  if (navigator.share) {
+    navigator.share(data).catch(() => copyToClipboard(data.url || data.text || ''));
+  } else {
+    copyToClipboard(data.url || data.text || '');
+  }
+}
+
+function initLightbox() {
+  document.getElementById('lb-close').addEventListener('click', closeLightbox);
+  document.getElementById('lb-prev').addEventListener('click', () => { if (lbCurrent > 0) showLbSlide(lbCurrent - 1, true); });
+  document.getElementById('lb-next').addEventListener('click', () => { if (lbCurrent < lbSlides.length - 1) showLbSlide(lbCurrent + 1, true); });
+
+  // Share button toggle menu
+  const shareBtn  = document.getElementById('lb-share-btn');
+  const shareMenu = document.getElementById('lb-share-menu');
+  shareBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    shareMenu.classList.toggle('open');
+  });
+
+  // Close share menu on outside click
+  document.addEventListener('click', () => shareMenu.classList.remove('open'));
+
+  // Share via WhatsApp — siempre la imagen actual
+  document.getElementById('share-whatsapp').addEventListener('click', () => {
+    shareMenu.classList.remove('open');
+    const slide = lbSlides[lbCurrent];
+    if (!slide) return;
+    const link  = window.location.href.split('#')[0] + '#proyecto-' + encodeURIComponent(lbClave) + '-foto-' + (lbCurrent + 1);
+    const msg   = encodeURIComponent(' *' + slide.titulo + '*' + (slide.desc ? '\n' + slide.desc : '') + '\n\n' + link);
+    const phone = (window._tallerTelefono || '').replace(/\D/g, '');
+    if (!phone) { showToast('⚠ TELÉFONO NO CONFIGURADO'); return; }
+    window.open('https://wa.me/' + phone + '?text=' + msg, '_blank');
+  });
+  shareMenu.addEventListener('click', e => e.stopPropagation());
+
+  // Share project (link to project via hash)
+  document.getElementById('share-project').addEventListener('click', () => {
+    shareMenu.classList.remove('open');
+    const title = document.getElementById('lb-project-title').textContent;
+    const link  = window.location.href.split('#')[0] + '#proyecto-' + encodeURIComponent(lbClave);
+    shareData({ title: title, text: ' ' + title, url: link });
+    showToast('✓ ENLACE DEL PROYECTO COPIADO');
+  });
+
+  // Share current image (link to project + foto index)
+  document.getElementById('share-image').addEventListener('click', () => {
+    shareMenu.classList.remove('open');
+    const slide = lbSlides[lbCurrent];
+    if (!slide) return;
+    const title = slide.titulo || document.getElementById('lb-project-title').textContent;
+    const link  = window.location.href.split('#')[0] + '#proyecto-' + encodeURIComponent(lbClave) + '-foto-' + (lbCurrent + 1);
+    shareData({ title: title, text: title, url: link });
+    showToast('✓ ENLACE DE LA IMAGEN COPIADO');
+  });
+
+  document.getElementById('lightbox').addEventListener('click', e => {
+    if (e.target.id === 'lightbox') closeLightbox();
+  });
+
+  document.addEventListener('keydown', e => {
+    if (!document.getElementById('lightbox').classList.contains('open')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft'  && lbCurrent > 0) showLbSlide(lbCurrent - 1, true);
+    if (e.key === 'ArrowRight' && lbCurrent < lbSlides.length - 1) showLbSlide(lbCurrent + 1, true);
+  });
+
+}
+
+/* ── Helpers ────────────────────────────────────────────────────── */
+function showError(msg) { const el = document.getElementById('error-banner'); el.innerHTML = msg; el.style.display = 'block'; hideLoader(); }
+function hideLoader() { const l = document.getElementById('loading-screen'); l.classList.add('hidden'); setTimeout(() => l.remove(), 500); }
+
+/* ── Carga principal ─────────────────────────────────────────────── */
+async function loadData() {
+  if (!SHEET_CSV_URL || SHEET_CSV_URL === 'PEGA_AQUI_TU_URL_CSV') {
+    showError(`⚠️ <strong>URL de Google Sheets no configurada.</strong><br>
+      Abre el HTML, busca <code>SHEET_CSV_URL</code> y pega tu URL de CSV publicado.<br>
+      <em>Archivo → Publicar en la web → CSV → copiar enlace.</em>`);
+    return;
+  }
+
+  const PROXY = 'https://corsproxy.io/?';
+  const bust  = `&_t=${Date.now()}`;
+  const url   = PROXY + encodeURIComponent(SHEET_CSV_URL + bust);
+
+  try {
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const text = await resp.text();
+    const rows = parseCSV(text);
+
+    // Info del taller
+    const info = {};
+    for (const row of rows) {
+      if ((row[0]||'').toLowerCase().trim() === 'info') {
+        info[(row[1]||'').trim()] = row[2] || '';
+      }
+    }
+
+    const nombre = info['nombre_taller'] || '[ Nombre del Taller ]';
+    document.getElementById('taller-nombre').textContent      = nombre;
+    const tn2 = document.getElementById('taller-nombre2'); if (tn2) tn2.textContent = nombre;
+    document.getElementById('taller-propietario').textContent = info['propietario'] || '—';
+    document.getElementById('taller-telefono').textContent    = info['telefono']    || '—';
+    // Guardar teléfono globalmente para WhatsApp
+    window._tallerTelefono = (info['telefono'] || '').replace(/\D/g, '');
+    const waLabel = document.getElementById('wa-num-label');
+    if (waLabel && info['telefono']) waLabel.textContent = info['telefono'];
+    document.getElementById('footer-brand').textContent       = 'Taller ' + nombre;
+    // Botón WA del footer
+    const footerWa = document.getElementById('footer-wa-btn');
+    if (footerWa && window._tallerTelefono) {
+      const msgBase = encodeURIComponent('Hola, vi tu portafolio y me interesa contactarme contigo.');
+      footerWa.href = 'https://wa.me/' + window._tallerTelefono + '?text=' + msgBase;
+    }
+    document.title = `Portafolio — ${nombre}`;
+
+    // Agrupar y renderizar trabajos
+    const groups    = groupWorks(rows);
+    const container = document.getElementById('works-container');
+
+    if (groups.length === 0) {
+      container.innerHTML = '<p style="color:var(--muted);font-size:13px;padding:1rem 0">No se encontraron trabajos en la hoja.</p>';
+    } else {
+      container.innerHTML = groups.map((g, i) => renderWork(g, i + 1)).join('');
+      initCarousels(groups);
+    }
+
+    initLightbox();
+    handleHashNavigation(groups);
+    hideLoader();
+
+  } catch (err) {
+    showError(`❌ <strong>No se pudo cargar la hoja de Google Sheets.</strong><br>
+      Verifica que la URL sea correcta y que la hoja esté publicada como CSV.<br>
+      <small>Error: ${escH(err.message)}</small>`);
+  }
+}
+
+/* ── Navegar a proyecto por hash al cargar ──────────────────────── */
+function handleHashNavigation(groups) {
+  const hash = decodeURIComponent(window.location.hash);
+  const m = hash.match(/^#proyecto-(.+?)(?:-foto-(\d+))?$/);
+  if (!m) return;
+  const clave  = m[1];
+  const fotoIdx = m[2] ? parseInt(m[2]) - 1 : 0;
+  const group  = groups.find(g => g.clave === clave);
+  if (!group || group.slides.length === 0) return;
+  const idx = Math.min(fotoIdx, group.slides.length - 1);
+  // Scroll al card
+  const el = document.getElementById('proyecto-' + encodeURIComponent(clave));
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  // Abrir lightbox en esa foto
+  const el2     = document.getElementById('proyecto-' + encodeURIComponent(clave));
+  const cardNum = el2 ? el2.dataset.cardnum : '';
+  const projTitle = cardNum ? `// PROYECTO-${String(cardNum).padStart(2,'0')}` : clave;
+  setTimeout(() => openLightbox(group.slides, projTitle, idx, clave), 400);
+}
+
+loadData();
+</script>
+</body>
+</html>
