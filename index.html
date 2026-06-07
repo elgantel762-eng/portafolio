@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Portafolio — Taller de Herrería</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -18,200 +18,590 @@
     --light:    #C8C8C8;
     --white:    #F0EDE8;
     --orange:   #D4500A;
+    --px: 16px;
   }
-  body { font-family: 'IBM Plex Sans', sans-serif; background: var(--black); color: var(--white); font-size: 15px; line-height: 1.7; }
 
-  /* LOADING */
-  #loading-screen { position: fixed; inset: 0; background: var(--black); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.5rem; z-index: 9999; transition: opacity 0.4s ease; }
+  html { -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--black);
+    color: var(--white);
+    font-size: 14px;
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+
+  /* ── LOADING ── */
+  #loading-screen {
+    position: fixed; inset: 0;
+    background: var(--black);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 1.2rem; z-index: 9999;
+    transition: opacity 0.4s ease;
+  }
   #loading-screen.hidden { opacity: 0; pointer-events: none; }
   .loader-icon { font-size: 2.5rem; animation: spin 1s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .loader-text { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--orange); }
+  .loader-text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; letter-spacing: 0.25em;
+    text-transform: uppercase; color: var(--orange);
+  }
 
-  /* ERROR */
-  #error-banner { display: none; background: #3a0000; border: 1px solid #a00; color: #ffaaaa; font-family: 'IBM Plex Mono', monospace; font-size: 12px; padding: 1rem 2rem; text-align: center; line-height: 1.6; }
+  /* ── ERROR ── */
+  #error-banner {
+    display: none;
+    background: #3a0000; border: 1px solid #a00;
+    color: #ffaaaa;
+    font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+    padding: 1rem var(--px); text-align: center; line-height: 1.6;
+  }
 
-  /* PORTADA */
-  .cover { min-height: 100vh; display: flex; flex-direction: column; justify-content: flex-end; position: relative; overflow: hidden; border-bottom: 2px solid var(--orange); }
-  .cover-grid { position: absolute; inset: 0; background-image: linear-gradient(var(--iron) 1px, transparent 1px), linear-gradient(90deg, var(--iron) 1px, transparent 1px); background-size: 60px 60px; opacity: 0.3; }
-  .cover-stripe { position: absolute; top: 0; left: 0; width: 8px; height: 100%; background: var(--orange); }
-  .cover-bg-letter { position: absolute; bottom: -3rem; right: -2rem; font-family: 'Bebas Neue', sans-serif; font-size: 30rem; color: var(--charcoal); line-height: 1; user-select: none; pointer-events: none; }
-  .cover-content { position: relative; padding: 4rem 5rem 5rem 6rem; }
-  .cover-eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--orange); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 14px; }
-  .cover-eyebrow::before { content: ''; width: 32px; height: 2px; background: var(--orange); }
-  .cover-word { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem, 8vw, 6.5rem); color: var(--ash); line-height: 0.9; letter-spacing: 0.04em; display: block; }
-  .cover-name { font-family: 'Bebas Neue', sans-serif; font-size: clamp(4rem, 11vw, 10rem); color: var(--orange); line-height: 0.85; letter-spacing: 0.03em; display: block; margin-bottom: 3rem; }
-  .cover-divider { height: 1px; background: var(--iron); margin-bottom: 2.5rem; }
-  .cover-info-row { display: flex; flex-wrap: wrap; }
-  .cover-info-item { padding-right: 3rem; margin-right: 3rem; border-right: 1px solid var(--iron); }
-  .cover-info-item:last-child { border-right: none; margin-right: 0; padding-right: 0; }
-  .info-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--orange); margin-bottom: 5px; }
-  .info-value { font-size: 16px; font-weight: 500; color: var(--light); }
+  /* ── PORTADA ── */
+  .cover {
+    min-height: 55vh;
+    display: flex; flex-direction: column;
+    justify-content: flex-end;
+    position: relative; overflow: hidden;
+    border-bottom: 2px solid var(--orange);
+  }
+  .cover-grid {
+    position: absolute; inset: 0;
+    background-image: linear-gradient(var(--iron) 1px, transparent 1px), linear-gradient(90deg, var(--iron) 1px, transparent 1px);
+    background-size: 40px 40px; opacity: 0.25;
+  }
+  .cover-stripe { position: absolute; top: 0; left: 0; width: 5px; height: 100%; background: var(--orange); }
+  .cover-bg-letter {
+    position: absolute; bottom: -2rem; right: -1rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: min(55vw, 18rem);
+    color: var(--charcoal); line-height: 1;
+    user-select: none; pointer-events: none;
+  }
+  .cover-content { position: relative; padding: 2rem var(--px) 2.5rem calc(var(--px) + 8px); }
+  .cover-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px; letter-spacing: 0.25em;
+    text-transform: uppercase; color: var(--orange);
+    margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .cover-eyebrow::before { content: ''; width: 22px; height: 2px; background: var(--orange); }
+  .cover-word {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.4rem, 10vw, 4rem);
+    color: var(--ash); line-height: 0.9; letter-spacing: 0.04em; display: block;
+  }
+  .cover-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 14vw, 7rem);
+    color: var(--orange); line-height: 0.85;
+    letter-spacing: 0.03em; display: block; margin-bottom: 1.8rem;
+  }
+  .cover-divider { height: 1px; background: var(--iron); margin-bottom: 1.5rem; }
+  .cover-info-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem 0.5rem;
+  }
+  .cover-info-item.full { grid-column: 1 / -1; }
+  .info-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px; letter-spacing: 0.25em;
+    text-transform: uppercase; color: var(--orange); margin-bottom: 3px;
+  }
+  .info-value { font-size: 14px; font-weight: 500; color: var(--light); }
 
-  /* SECCIÓN */
-  .works-section { padding: 5rem 5rem 6rem 6rem; position: relative; }
-  .works-section::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--orange); }
-  .works-header { display: flex; align-items: flex-end; gap: 2rem; margin-bottom: 3rem; border-bottom: 1px solid var(--iron); padding-bottom: 2rem; }
-  .works-num { font-family: 'Bebas Neue', sans-serif; font-size: 5rem; color: var(--iron); line-height: 1; flex-shrink: 0; }
-  .works-tag { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--orange); margin-bottom: 5px; }
-  .works-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 5vw, 4rem); letter-spacing: 0.04em; color: var(--white); line-height: 1; }
+  /* ── SECCIÓN TRABAJOS ── */
+  .works-section {
+    padding: 20px var(--px) 100px calc(var(--px) + 4px);
+    position: relative;
+  }
+  .works-section::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px; background: var(--orange);
+  }
+  .works-header {
+    display: flex; align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem; margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--iron);
+    padding-bottom: 1.2rem;
+  }
+  .works-header-left { display: flex; align-items: flex-end; gap: 1rem; }
+  .works-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3.5rem; color: var(--iron); line-height: 1; flex-shrink: 0;
+  }
+  .works-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px; letter-spacing: 0.25em;
+    text-transform: uppercase; color: var(--orange); margin-bottom: 4px;
+  }
+  .works-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(1.8rem, 7vw, 3rem);
+    letter-spacing: 0.04em; color: var(--white); line-height: 1;
+  }
 
-  /* WORK ITEM */
-  .work-item { display: grid; grid-template-columns: 260px 1fr; border: 1px solid var(--iron); margin-bottom: 2px; transition: border-color 0.2s; }
-  .work-item:hover { border-color: var(--orange); }
+  /* ── BOTÓN CATEGORÍAS ── */
+  .cat-open-btn {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    background: none; border: 1px solid var(--orange);
+    color: var(--orange);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 10px 14px;
+    cursor: pointer; flex-shrink: 0;
+    min-height: 44px;
+    transition: background 0.2s, color 0.2s;
+    -webkit-appearance: none;
+  }
+  .cat-open-btn:active { background: var(--orange); color: var(--black); }
 
-  /* CARRUSEL */
-  .work-carousel { position: relative; background: var(--steel); border-right: 1px solid var(--iron); min-height: 200px; overflow: hidden; display: flex; align-items: stretch; }
-  .carousel-track { display: flex; width: 100%; transition: transform 0.35s ease; }
-  .carousel-slide { flex: 0 0 100%; width: 100%; cursor: zoom-in; overflow: hidden; }
-  .carousel-slide img { width: 100%; height: 200px; object-fit: cover; display: block; transition: transform 0.3s ease; }
-  .carousel-slide:hover img { transform: scale(1.04); }
-  .carousel-no-img { flex: 0 0 100%; width: 100%; height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--muted); }
+  /* ── WORK ITEM ── columna única en móvil */
+  .work-item {
+    display: flex; flex-direction: column;
+    border: 1px solid var(--iron);
+    margin-bottom: 2px;
+    overflow: hidden;
+  }
+
+  /* ── CARRUSEL ── */
+  .work-carousel {
+    position: relative; background: var(--steel); overflow: hidden;
+    min-height: 180px;
+  }
+  .carousel-track {
+    display: flex; transition: transform 0.3s ease;
+    touch-action: pan-y; will-change: transform;
+  }
+  .carousel-slide { flex: 0 0 100%; width: 100%; overflow: hidden; }
+  .carousel-slide img {
+    width: 100%; height: 260px; object-fit: cover; display: block;
+  }
+  .carousel-no-img {
+    flex: 0 0 100%; width: 100%; height: 180px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 8px; color: var(--muted);
+  }
   .carousel-no-img span { font-size: 2rem; }
-  .carousel-no-img p { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; }
-  .carousel-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.65); border: 1px solid var(--iron); color: var(--white); font-size: 14px; width: 30px; height: 30px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 2; transition: background 0.2s, border-color 0.2s; user-select: none; }
-  .carousel-btn:hover { background: var(--orange); border-color: var(--orange); }
-  .carousel-btn.prev { left: 6px; }
-  .carousel-btn.next { right: 6px; }
-  .carousel-counter { position: absolute; bottom: 6px; right: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.15em; color: var(--ash); background: rgba(0,0,0,0.55); padding: 2px 6px; pointer-events: none; }
+  .carousel-no-img p {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+  }
+  .carousel-btn {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    background: rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: var(--white); font-size: 16px;
+    width: 40px; height: 40px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 2; user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .carousel-btn:active { background: var(--orange); border-color: var(--orange); }
+  .carousel-btn.prev { left: 8px; }
+  .carousel-btn.next { right: 8px; }
+  .carousel-counter {
+    position: absolute; bottom: 8px; right: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.12em;
+    color: var(--white);
+    background: rgba(0,0,0,0.65); padding: 3px 8px;
+    pointer-events: none;
+  }
+  .carousel-dots {
+    position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 5px; pointer-events: none;
+  }
+  .carousel-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: rgba(255,255,255,0.35);
+    transition: background 0.2s, transform 0.2s;
+  }
+  .carousel-dot.active { background: var(--orange); transform: scale(1.3); }
 
-  /* BODY */
-  .work-body { padding: 1.75rem 2rem; }
-  .work-code { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.25em; color: var(--orange); margin-bottom: 6px; }
-  .work-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 0.05em; color: var(--white); margin-bottom: 0.6rem; }
-  .work-desc { font-size: 13.5px; color: var(--ash); font-weight: 300; line-height: 1.7; margin-bottom: 1rem; max-width: 540px; }
-  .work-caption { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--muted); border-left: 2px solid var(--orange); padding-left: 10px; line-height: 1.5; }
+  /* ── CARD BODY ── */
+  .work-body { padding: 1.2rem var(--px); }
+  .work-code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px; letter-spacing: 0.22em; color: var(--orange); margin-bottom: 4px;
+  }
+  .work-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem; letter-spacing: 0.04em; color: var(--white); margin-bottom: 0.5rem;
+  }
+  .work-desc { font-size: 13px; color: var(--ash); font-weight: 300; line-height: 1.65; margin-bottom: 0.8rem; }
+  .work-caption {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; color: var(--muted);
+    border-left: 2px solid var(--orange); padding-left: 8px; line-height: 1.5;
+  }
 
-  /* LIGHTBOX */
-  #lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 8888; display: none; flex-direction: column; }
+  /* ── LIGHTBOX ── */
+  #lightbox {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.97);
+    z-index: 8888; display: none; flex-direction: column;
+  }
   #lightbox.open { display: flex; }
 
-  .lb-top { position: absolute; top: 0; left: 0; right: 0; padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); z-index: 2; }
-  .lb-project-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 0.08em; color: var(--white); }
-  .lb-counter-top { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.2em; color: var(--ash); }
-  .lb-close { background: none; border: 1px solid var(--iron); color: var(--white); font-size: 18px; width: 36px; height: 36px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s, border-color 0.2s; }
-  .lb-close:hover { background: var(--orange); border-color: var(--orange); }
+  .lb-top {
+    position: absolute; top: 0; left: 0; right: 0;
+    padding: 0.6rem var(--px);
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 0.5rem;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.85), transparent);
+    z-index: 2;
+  }
+  .lb-back-btn {
+    display: flex; align-items: center; gap: 5px;
+    background: none; border: none;
+    color: var(--white);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 8px 4px; cursor: pointer; flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+    min-height: 44px;
+  }
+  .lb-back-btn:active { color: var(--orange); }
+  .lb-back-btn svg { flex-shrink: 0; }
+  .lb-project-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem; letter-spacing: 0.07em; color: var(--white);
+  }
+  .lb-counter-top {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.18em; color: var(--ash);
+  }
+  .lb-close {
+    background: none; border: 1px solid var(--iron);
+    color: var(--white); font-size: 16px;
+    width: 42px; height: 42px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .lb-close:active { background: var(--orange); border-color: var(--orange); }
 
-  /* área central: flechas + imagen */
-  .lb-main { flex: 1; display: flex; align-items: center; justify-content: center; gap: 1rem; padding: 5rem 1rem 8rem; }
-  .lb-img-wrap { flex: 1; max-width: 860px; max-height: 70vh; display: flex; align-items: center; justify-content: center; }
-  #lb-img { max-width: 100%; max-height: 70vh; object-fit: contain; box-shadow: 0 0 60px rgba(0,0,0,0.8); transition: opacity 0.18s ease; }
+  .lb-main {
+    flex: 1;
+    display: flex; align-items: center; justify-content: center;
+    padding: 3.5rem 0 5rem;
+    overflow: hidden; position: relative;
+    touch-action: pan-y;
+  }
+  .lb-img-wrap {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 4px;
+  }
+  #lb-img {
+    max-width: 100%; max-height: 100%;
+    object-fit: contain;
+    box-shadow: 0 0 40px rgba(0,0,0,0.8);
+    transition: opacity 0.18s ease;
+    user-select: none;
+    -webkit-user-drag: none;
+    transform-origin: center center;
+    will-change: transform;
+  }
   #lb-img.fading { opacity: 0; }
 
-  .lb-nav { background: rgba(255,255,255,0.07); border: 1px solid var(--iron); color: var(--white); font-size: 20px; width: 48px; height: 48px; flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s, border-color 0.2s; }
-  .lb-nav:hover { background: var(--orange); border-color: var(--orange); }
-  .lb-nav:disabled { opacity: 0.2; cursor: default; pointer-events: none; }
+  /* Flechas de navegación — visibles en móvil y tablet */
+  .lb-nav {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    background: rgba(0,0,0,0.55);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: var(--white); font-size: 18px;
+    width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 3; flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .lb-nav:active { background: var(--orange); border-color: var(--orange); }
+  .lb-nav:disabled { opacity: 0.15; pointer-events: none; }
+  .lb-prev-nav { left: 10px; }
+  .lb-next-nav { right: 10px; }
 
-  /* descripción en lightbox — fija en la parte inferior */
+  /* Zonas táctiles laterales — eliminadas, las flechas las reemplazan */
+  .lb-tap-prev, .lb-tap-next { display: none; }
+
   .lb-bottom {
     position: absolute; bottom: 0; left: 0; right: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.92) 80%, transparent);
-    padding: 2rem 5rem 1.5rem;
-    display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.93) 85%, transparent);
+    padding: 1.8rem var(--px) 1.2rem;
+    display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
   }
   .lb-slide-title {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.3rem; letter-spacing: 0.06em;
-    color: var(--white); text-align: center;
-    transition: opacity 0.18s ease;
+    font-size: 1.2rem; letter-spacing: 0.05em;
+    color: var(--white); text-align: center; transition: opacity 0.18s;
   }
   .lb-slide-desc {
-    font-size: 13px; color: var(--ash); font-weight: 300;
-    text-align: center; max-width: 640px; line-height: 1.6;
-    transition: opacity 0.18s ease;
+    font-size: 12px; color: var(--ash); font-weight: 300;
+    text-align: center; max-width: 320px; line-height: 1.55; transition: opacity 0.18s;
   }
   .lb-slide-caption {
-    font-family: 'IBM Plex Mono', monospace; font-size: 10px;
-    color: var(--muted); text-align: center;
-    transition: opacity 0.18s ease;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; color: var(--muted); text-align: center; transition: opacity 0.18s;
   }
   .lb-slide-title.fading, .lb-slide-desc.fading, .lb-slide-caption.fading { opacity: 0; }
+  .lb-dots {
+    display: flex; gap: 7px; margin-top: 0.4rem;
+    flex-wrap: wrap; justify-content: center; max-width: 280px;
+  }
+  .lb-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--mid); border: 1px solid var(--muted);
+    cursor: pointer; transition: background 0.2s, transform 0.2s;
+  }
+  .lb-dot.active { background: var(--orange); border-color: var(--orange); transform: scale(1.25); }
+  .lb-swipe-hint {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px; letter-spacing: 0.18em; color: var(--muted); text-transform: uppercase;
+    margin-top: 2px;
+  }
 
-  /* dots */
-  .lb-dots { display: flex; gap: 8px; margin-top: 0.5rem; }
-  .lb-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--mid); border: 1px solid var(--muted); cursor: pointer; transition: background 0.2s; }
-  .lb-dot.active { background: var(--orange); border-color: var(--orange); }
+  /* ── SHARE ── */
+  .lb-share-btn {
+    background: none; border: 1px solid var(--iron);
+    color: var(--ash); font-size: 16px;
+    width: 42px; height: 42px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .lb-share-btn:active { background: var(--iron); color: var(--white); }
 
-  .lb-swipe-hint { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.2em; color: var(--muted); text-transform: uppercase; display: none; }
-
-  /* ── OVERLAY CATEGORÍAS ── */
-  .cat-open-btn { display: flex; align-items: center; gap: 8px; background: none; border: 1px solid var(--orange); color: var(--orange); font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; padding: 10px 22px; cursor: pointer; transition: background 0.2s, color 0.2s; margin-left: auto; flex-shrink: 0; }
-  .cat-open-btn:hover { background: var(--orange); color: var(--black); }
-  .cat-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.78); z-index: 8000; display: none; align-items: center; justify-content: center; padding: 1.5rem; }
-  .cat-overlay.open { display: flex; }
-  .cat-overlay-box { background: var(--black); border: 1px solid var(--iron); border-top: 3px solid var(--orange); width: 100%; max-width: 980px; max-height: 88vh; display: flex; flex-direction: column; }
-  .cat-overlay-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 22px; border-bottom: 1px solid var(--iron); flex-shrink: 0; }
-  .cat-overlay-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; color: var(--orange); letter-spacing: 0.06em; }
-  .cat-overlay-close { background: none; border: 1px solid var(--iron); color: var(--ash); width: 34px; height: 34px; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
-  .cat-overlay-close:hover { background: var(--iron); color: var(--white); }
-  .cat-overlay-body { overflow-y: auto; padding: 20px; flex: 1; }
-  /* Carpetas */
-  .cat-folders { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
-  .cat-folder { background: var(--charcoal); border: 1px solid var(--iron); cursor: pointer; overflow: hidden; transition: border-color 0.2s; }
-  .cat-folder:hover { border-color: var(--orange); }
-  .cat-folder-cover { aspect-ratio: 4/3; overflow: hidden; }
-  .cat-folder-cover img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.35s; }
-  .cat-folder:hover .cat-folder-cover img { transform: scale(1.05); }
-  .cat-folder-info { padding: 10px 12px; }
-  .cat-folder-name { font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; font-weight: 500; color: var(--white); }
-  .cat-folder-count { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--muted); margin-top: 3px; letter-spacing: 0.1em; }
-  /* Panel fotos dentro del overlay */
-  .cat-panel { display: none; }
-  .cat-panel.open { display: block; }
-  .cat-panel-header { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
-  .cat-panel-back { background: none; border: 1px solid var(--iron); color: var(--ash); font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.12em; padding: 7px 14px; cursor: pointer; transition: border-color 0.2s, color 0.2s; }
-  .cat-panel-back:hover { border-color: var(--ash); color: var(--white); }
-  .cat-panel-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; color: var(--orange); letter-spacing: 0.05em; }
-  .cat-photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1px; background: var(--iron); }
-  .cat-photo { background: var(--black); overflow: hidden; cursor: pointer; position: relative; aspect-ratio: 4/3; }
-  .cat-photo img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s; }
-  .cat-photo:hover img { transform: scale(1.05); }
-  .cat-photo-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 55%); opacity: 0; transition: opacity 0.25s; display: flex; flex-direction: column; justify-content: flex-end; padding: 10px; }
-  .cat-photo:hover .cat-photo-overlay { opacity: 1; }
-  .cat-photo-title { font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; font-weight: 500; color: var(--white); }
-  .cat-photo-proj  { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--ash); margin-top: 2px; }
-  @media (max-width: 600px) { .cat-folders { grid-template-columns: repeat(2,1fr); } .cat-photo-grid { grid-template-columns: repeat(2,1fr); } }
-
-  /* SHARE BUTTON */
-  .lb-share-btn { background: none; border: 1px solid var(--iron); color: var(--ash); font-size: 16px; width: 36px; height: 36px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s, border-color 0.2s, color 0.2s; position: relative; }
-  .lb-share-btn:hover { background: var(--iron); border-color: var(--muted); color: var(--white); }
-
-  /* SHARE MENU */
-  .lb-share-menu { position: fixed; top: 56px; right: 12px; background: var(--charcoal); border: 1px solid var(--iron); min-width: 220px; z-index: 9000; display: none; flex-direction: column; box-shadow: 0 8px 24px rgba(0,0,0,0.8); }
+  /* Bottom sheet en móvil */
+  .lb-share-menu {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--charcoal);
+    border-top: 2px solid var(--orange);
+    z-index: 9000; display: none; flex-direction: column;
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0 -8px 30px rgba(0,0,0,0.8);
+    padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px);
+  }
   .lb-share-menu.open { display: flex; }
-  .lb-share-menu-title { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--orange); padding: 10px 14px 6px; border-bottom: 1px solid var(--iron); }
-  .lb-share-option { display: flex; align-items: center; gap: 10px; padding: 11px 14px; cursor: pointer; border: none; background: none; color: var(--light); font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; text-align: left; width: 100%; transition: background 0.15s; border-bottom: 1px solid var(--iron); }
+  .lb-share-menu-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--orange);
+    padding: 14px 16px 8px; border-bottom: 1px solid var(--iron); text-align: center;
+  }
+  .lb-share-option {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px;
+    cursor: pointer; border: none; background: none;
+    color: var(--light);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px; text-align: left; width: 100%;
+    border-bottom: 1px solid var(--iron);
+    min-height: 56px;
+    -webkit-tap-highlight-color: transparent;
+  }
   .lb-share-option:last-child { border-bottom: none; }
-  .lb-share-option:hover { background: var(--iron); color: var(--white); }
-  .lb-share-option .share-icon { font-size: 16px; flex-shrink: 0; }
+  .lb-share-option:active { background: var(--iron); }
+  .lb-share-option .share-icon { font-size: 20px; flex-shrink: 0; }
   .lb-share-option .share-label { display: flex; flex-direction: column; gap: 2px; }
-  .lb-share-option .share-label strong { font-weight: 500; }
-  .lb-share-option .share-label span { font-size: 11px; color: var(--muted); font-family: 'IBM Plex Mono', monospace; }
+  .lb-share-option .share-label strong { font-weight: 500; font-size: 14px; }
+  .lb-share-option .share-label span {
+    font-size: 11px; color: var(--muted); font-family: 'IBM Plex Mono', monospace;
+  }
   .lb-share-option--wa { border-top: 1px solid #1a3a1a !important; }
-  .lb-share-option--wa:hover { background: #0d2b0d !important; color: #4cde80 !important; }
-  .lb-share-option--wa:hover .share-label span { color: #2e7d4f; }
+  .lb-share-option--wa:active { background: #0d2b0d !important; color: #4cde80 !important; }
   .lb-share-option--wa svg { color: #25D366; }
 
-  /* TOAST */
-  .lb-toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--orange); color: var(--black); font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.15em; padding: 10px 20px; opacity: 0; pointer-events: none; transition: opacity 0.25s, transform 0.25s; z-index: 9999; white-space: nowrap; }
+  .share-backdrop {
+    display: none; position: fixed; inset: 0; z-index: 8999;
+  }
+  .share-backdrop.open { display: block; }
+
+  /* ── TOAST ── */
+  .lb-toast {
+    position: fixed; bottom: 5rem; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--orange); color: var(--black);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; letter-spacing: 0.12em;
+    padding: 10px 18px; opacity: 0; pointer-events: none;
+    transition: opacity 0.25s, transform 0.25s;
+    z-index: 9999; white-space: nowrap;
+  }
   .lb-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-  /* FOOTER */
-  .footer { background: var(--orange); padding: 1.5rem 6rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
-  .footer-brand { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; color: var(--black); letter-spacing: 0.06em; }
-  .footer-tel { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--black); font-weight: 500; }
-  .footer-wa-btn { display: inline-flex; align-items: center; gap: 8px; background: var(--black); color: #fff; font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; font-weight: 500; padding: 10px 20px; text-decoration: none; transition: background 0.2s, color 0.2s; }
-  .footer-wa-btn:hover { background: #25D366; color: #000; }
+  /* ── OVERLAY CATEGORÍAS ── */
+  .cat-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 8000; display: none;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .cat-overlay.open { display: flex; }
+  .cat-overlay-box {
+    background: var(--black);
+    border: 1px solid var(--iron); border-top: 3px solid var(--orange);
+    width: 100%; max-height: 90vh;
+    display: flex; flex-direction: column;
+    border-radius: 12px 12px 0 0;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+  .cat-overlay-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px; border-bottom: 1px solid var(--iron); flex-shrink: 0;
+  }
+  .cat-overlay-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem; color: var(--orange); letter-spacing: 0.06em;
+  }
+  .cat-overlay-close {
+    background: none; border: 1px solid var(--iron);
+    color: var(--ash); width: 40px; height: 40px;
+    cursor: pointer; font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .cat-overlay-close:active { background: var(--iron); color: var(--white); }
+  .cat-overlay-body { overflow-y: auto; padding: 14px; flex: 1; -webkit-overflow-scrolling: touch; }
 
-  @media (max-width: 680px) {
-    .cover-content { padding: 2.5rem 1.5rem 3rem 2.5rem; }
-    .works-section { padding: 3rem 1.5rem 4rem 2.5rem; }
-    .work-item { grid-template-columns: 1fr; }
-    .work-carousel { border-right: none; border-bottom: 1px solid var(--iron); }
-    .footer { padding: 1.5rem 2rem; }
-    .lb-nav { width: 38px; height: 38px; font-size: 16px; }
-    .lb-bottom { padding: 2rem 1.5rem 1.5rem; }
-    .lb-swipe-hint { display: block; }
+  .cat-folders { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .cat-folder {
+    background: var(--charcoal); border: 1px solid var(--iron);
+    cursor: pointer; overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .cat-folder:active { border-color: var(--orange); }
+  .cat-folder-cover { aspect-ratio: 4/3; overflow: hidden; }
+  .cat-folder-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cat-folder-info { padding: 8px 10px; }
+  .cat-folder-name { font-size: 12px; font-weight: 500; color: var(--white); }
+  .cat-folder-count {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px; color: var(--muted); margin-top: 2px; letter-spacing: 0.1em;
+  }
+  .cat-panel { display: none; }
+  .cat-panel.open { display: block; }
+  .cat-panel-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .cat-panel-back {
+    background: none; border: 1px solid var(--iron);
+    color: var(--ash);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; letter-spacing: 0.1em;
+    padding: 8px 14px; cursor: pointer; min-height: 44px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .cat-panel-back:active { border-color: var(--ash); color: var(--white); }
+  .cat-panel-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem; color: var(--orange); letter-spacing: 0.05em;
+  }
+  .cat-photo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--iron); }
+  .cat-photo {
+    background: var(--black); overflow: hidden;
+    cursor: pointer; position: relative; aspect-ratio: 4/3;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .cat-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cat-photo-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 55%);
+    display: flex; flex-direction: column; justify-content: flex-end; padding: 8px;
+  }
+  .cat-photo-title { font-size: 11px; font-weight: 500; color: var(--white); line-height: 1.3; }
+  .cat-photo-proj { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--ash); margin-top: 1px; }
+
+  /* ── BOTÓN WA FLOTANTE ── */
+  .wa-fab {
+    position: fixed;
+    bottom: calc(1.2rem + env(safe-area-inset-bottom, 0px));
+    right: 1.2rem;
+    z-index: 7000;
+    background: #25D366; color: #000;
+    width: 58px; height: 58px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 20px rgba(37,211,102,0.4);
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .wa-fab:active { transform: scale(0.93); box-shadow: 0 2px 10px rgba(37,211,102,0.3); }
+  .wa-fab svg { width: 28px; height: 28px; }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: var(--orange);
+    padding: 1.2rem var(--px) calc(1.2rem + env(safe-area-inset-bottom, 0px));
+    display: flex; flex-direction: column; align-items: flex-start; gap: 0.8rem;
+  }
+  .footer-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem; color: var(--black); letter-spacing: 0.06em;
+  }
+  .footer-tel { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--black); font-weight: 500; }
+  .footer-wa-btn {
+    display: none;
+    align-items: center; gap: 8px;
+    background: var(--black); color: #fff;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px; font-weight: 500;
+    padding: 12px 20px; text-decoration: none; min-height: 48px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .footer-wa-btn:active { background: #1a1a1a; }
+
+  /* ── TABLET (600px+) ── */
+  @media (min-width: 600px) {
+    :root { --px: 28px; }
+    .carousel-slide img { height: 320px; }
+    .cat-folders { grid-template-columns: repeat(3, 1fr); }
+    .cat-photo-grid { grid-template-columns: repeat(3, 1fr); }
+    .cover-info-row { grid-template-columns: repeat(3, 1fr); }
+    .cover-info-item.full { grid-column: 1 / -1; }
+    .lb-nav { font-size: 20px; width: 48px; height: 48px; }
+    .lb-nav:hover { background: var(--orange); border-color: var(--orange); }
+  }
+
+  @media (min-width: 900px) {
+    :root { --px: 80px; }
+    .cover { min-height: 100vh; }
+    .cover-content { padding: 4rem var(--px) 5rem calc(var(--px) + 8px); }
+    .works-section { padding: 5rem var(--px) 6rem calc(var(--px) + 4px); }
+    .work-item { flex-direction: row; }
+    .work-carousel { width: 260px; flex-shrink: 0; border-right: 1px solid var(--iron); min-height: auto; }
+    .work-carousel .carousel-slide img { height: 200px; }
+    .cover-info-row { display: flex; flex-wrap: wrap; }
+    .cover-info-item { padding-right: 3rem; margin-right: 3rem; border-right: 1px solid var(--iron); }
+    .cover-info-item:last-child { border-right: none; margin-right: 0; padding-right: 0; }
+    .cover-info-item.full { border-right: 1px solid var(--iron); grid-column: auto; }
+    .cat-folders { grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); }
+    .cat-photo-grid { grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); }
+    .cat-overlay-box { max-width: 980px; max-height: 88vh; border-radius: 0; }
+    .cat-overlay { align-items: center; }
+    .lb-share-menu {
+      position: fixed; top: 56px; right: 12px; bottom: auto; left: auto;
+      border-radius: 0; border-top: none;
+      border: 1px solid var(--iron);
+      min-width: 220px;
+    }
+    .wa-fab { display: none; }
+    .footer-wa-btn { display: inline-flex; }
+    .footer { flex-direction: row; align-items: center; justify-content: space-between; }
+    .works-header { justify-content: flex-start; }
+    .cat-photo-overlay { opacity: 0; transition: opacity 0.25s; }
+    .cat-photo:hover .cat-photo-overlay { opacity: 1; }
+    .carousel-slide img { transition: transform 0.3s; cursor: zoom-in; }
+    .carousel-slide:hover img { transform: scale(1.04); }
   }
 </style>
 </head>
@@ -227,49 +617,29 @@
 <!-- LIGHTBOX -->
 <div id="lightbox" role="dialog" aria-modal="true">
   <div class="lb-top">
+    <button class="lb-back-btn" id="lb-back-btn" title="Volver">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Volver
+    </button>
     <div id="lb-project-title" class="lb-project-title"></div>
-    <div id="lb-counter-top" class="lb-counter-top"></div>
     <div style="display:flex;align-items:center;gap:8px;">
+      <div id="lb-counter-top" class="lb-counter-top"></div>
       <button class="lb-share-btn" id="lb-share-btn" title="Compartir">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
       </button>
-      <button class="lb-close" id="lb-close" title="Cerrar (Esc)">✕</button>
+      <button class="lb-close" id="lb-close" title="Cerrar">✕</button>
     </div>
-  </div>
-  <!-- Share menu — fuera del botón para evitar HTML inválido -->
-  <div class="lb-share-menu" id="lb-share-menu">
-    <div class="lb-share-menu-title">Compartir</div>
-    <button class="lb-share-option" id="share-project">
-      <span class="share-icon">🗂️</span>
-      <span class="share-label">
-        <strong>Proyecto completo</strong>
-        <span>Todas las fotos del proyecto</span>
-      </span>
-    </button>
-    <button class="lb-share-option" id="share-image">
-      <span class="share-icon">🖼️</span>
-      <span class="share-label">
-        <strong>Imagen actual</strong>
-        <span>Solo la foto visible</span>
-      </span>
-    </button>
-    <button class="lb-share-option lb-share-option--wa" id="share-whatsapp">
-      <span class="share-icon">
-        <svg width="17" height="17" viewBox="0 0 32 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M16.004 2.667C8.64 2.667 2.667 8.64 2.667 16c0 2.347.613 4.587 1.773 6.56L2.667 29.333l6.987-1.733A13.267 13.267 0 0016.004 29.333C23.36 29.333 29.333 23.36 29.333 16S23.36 2.667 16.004 2.667zm0 24a10.56 10.56 0 01-5.387-1.48l-.387-.227-4.147 1.027 1.053-3.973-.253-.4A10.613 10.613 0 015.333 16c0-5.88 4.787-10.667 10.667-10.667S26.667 10.12 26.667 16 21.88 26.667 16.004 26.667zm5.853-7.987c-.32-.16-1.893-.933-2.187-1.04-.293-.107-.507-.16-.72.16-.213.32-.827 1.04-.987 1.253-.173.213-.347.24-.653.08-.32-.16-1.333-.493-2.547-1.573-.947-.84-1.587-1.88-1.773-2.2-.187-.32-.013-.493.147-.653.147-.147.32-.373.48-.56.16-.187.213-.32.32-.533.107-.213.053-.4-.027-.56-.08-.16-.72-1.733-.987-2.373-.253-.613-.52-.533-.72-.547h-.613c-.213 0-.56.08-.853.4-.293.32-1.12 1.093-1.12 2.667s1.147 3.093 1.307 3.307c.16.213 2.253 3.44 5.467 4.827.76.333 1.36.533 1.827.68.76.24 1.453.213 2 .133.613-.093 1.893-.773 2.16-1.52.267-.747.267-1.387.187-1.52-.08-.133-.293-.213-.613-.373z"/></svg>
-      </span>
-      <span class="share-label">
-        <strong>Enviar a mi WhatsApp</strong>
-        <span id="wa-num-label">Enviármelo directamente</span>
-      </span>
-    </button>
   </div>
 
-  <div class="lb-main">
-    <button class="lb-nav" id="lb-prev">&#8592;</button>
+  <div class="lb-tap-prev" id="lb-tap-prev"></div>
+  <div class="lb-tap-next" id="lb-tap-next"></div>
+
+  <div class="lb-main" id="lb-main">
+    <button class="lb-nav lb-prev-nav" id="lb-prev">&#8592;</button>
     <div class="lb-img-wrap">
-      <img id="lb-img" src="" alt="">
+      <img id="lb-img" src="" alt="" draggable="false">
     </div>
-    <button class="lb-nav" id="lb-next">&#8594;</button>
+    <button class="lb-nav lb-next-nav" id="lb-next">&#8594;</button>
   </div>
 
   <div class="lb-bottom">
@@ -277,9 +647,38 @@
     <div id="lb-slide-desc"  class="lb-slide-desc"></div>
     <div id="lb-slide-caption" class="lb-slide-caption"></div>
     <div class="lb-dots" id="lb-dots"></div>
-    <div class="lb-swipe-hint">desliza para navegar</div>
+    <div class="lb-swipe-hint">← desliza para navegar →</div>
   </div>
 </div>
+
+<div class="share-backdrop" id="share-backdrop"></div>
+<div class="lb-share-menu" id="lb-share-menu">
+  <div class="lb-share-menu-title">Compartir</div>
+  <button class="lb-share-option" id="share-project">
+    <span class="share-icon">🗂️</span>
+    <span class="share-label">
+      <strong>Proyecto completo</strong>
+      <span>Todas las fotos del proyecto</span>
+    </span>
+  </button>
+  <button class="lb-share-option" id="share-image">
+    <span class="share-icon">🖼️</span>
+    <span class="share-label">
+      <strong>Imagen actual</strong>
+      <span>Solo la foto visible</span>
+    </span>
+  </button>
+  <button class="lb-share-option lb-share-option--wa" id="share-whatsapp">
+    <span class="share-icon">
+      <svg width="20" height="20" viewBox="0 0 32 32" fill="currentColor"><path d="M16.004 2.667C8.64 2.667 2.667 8.64 2.667 16c0 2.347.613 4.587 1.773 6.56L2.667 29.333l6.987-1.733A13.267 13.267 0 0016.004 29.333C23.36 29.333 29.333 23.36 29.333 16S23.36 2.667 16.004 2.667zm0 24a10.56 10.56 0 01-5.387-1.48l-.387-.227-4.147 1.027 1.053-3.973-.253-.4A10.613 10.613 0 015.333 16c0-5.88 4.787-10.667 10.667-10.667S26.667 10.12 26.667 16 21.88 26.667 16.004 26.667zm5.853-7.987c-.32-.16-1.893-.933-2.187-1.04-.293-.107-.507-.16-.72.16-.213.32-.827 1.04-.987 1.253-.173.213-.347.24-.653.08-.32-.16-1.333-.493-2.547-1.573-.947-.84-1.587-1.88-1.773-2.2-.187-.32-.013-.493.147-.653.147-.147.32-.373.48-.56.16-.187.213-.32.32-.533.107-.213.053-.4-.027-.56-.08-.16-.72-1.733-.987-2.373-.253-.613-.52-.533-.72-.547h-.613c-.213 0-.56.08-.853.4-.293.32-1.12 1.093-1.12 2.667s1.147 3.093 1.307 3.307c.16.213 2.253 3.44 5.467 4.827.76.333 1.36.533 1.827.68.76.24 1.453.213 2 .133.613-.093 1.893-.773 2.16-1.52.267-.747.267-1.387.187-1.52-.08-.133-.293-.213-.613-.373z"/></svg>
+    </span>
+    <span class="share-label">
+      <strong>Enviar a mi WhatsApp</strong>
+      <span id="wa-num-label">Enviármelo directamente</span>
+    </span>
+  </button>
+</div>
+
 <div class="lb-toast" id="lb-toast"></div>
 
 <!-- PORTADA -->
@@ -298,12 +697,12 @@
         <div id="taller-propietario" class="info-value">…</div>
       </div>
       <div class="cover-info-item">
-        <div class="info-label">Taller</div>
-        <div id="taller-nombre2" class="info-value">…</div>
-      </div>
-      <div class="cover-info-item">
         <div class="info-label">Teléfono</div>
         <div id="taller-telefono" class="info-value">…</div>
+      </div>
+      <div class="cover-info-item full">
+        <div class="info-label">Taller</div>
+        <div id="taller-nombre2" class="info-value">…</div>
       </div>
     </div>
   </div>
@@ -312,14 +711,16 @@
 <!-- TRABAJOS -->
 <section class="works-section">
   <div class="works-header">
-    <div class="works-num">02</div>
-    <div>
-      <div class="works-tag">// Galería de proyectos</div>
-      <div class="works-title">Trabajos Realizados</div>
+    <div class="works-header-left">
+      <div class="works-num">02</div>
+      <div>
+        <div class="works-tag">// Galería de proyectos</div>
+        <div class="works-title">Trabajos Realizados</div>
+      </div>
     </div>
     <button class="cat-open-btn" id="cat-open-btn">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-      Ver Categorías
+      Categorías
     </button>
   </div>
   <div id="works-container"></div>
@@ -345,6 +746,11 @@
   </div>
 </div>
 
+<!-- BOTÓN WA FLOTANTE (solo móvil) -->
+<a class="wa-fab" id="wa-fab" href="#" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">
+  <svg viewBox="0 0 32 32" fill="currentColor"><path d="M16.004 2.667C8.64 2.667 2.667 8.64 2.667 16c0 2.347.613 4.587 1.773 6.56L2.667 29.333l6.987-1.733A13.267 13.267 0 0016.004 29.333C23.36 29.333 29.333 23.36 29.333 16S23.36 2.667 16.004 2.667zm0 24a10.56 10.56 0 01-5.387-1.48l-.387-.227-4.147 1.027 1.053-3.973-.253-.4A10.613 10.613 0 015.333 16c0-5.88 4.787-10.667 10.667-10.667S26.667 10.12 26.667 16 21.88 26.667 16.004 26.667zm5.853-7.987c-.32-.16-1.893-.933-2.187-1.04-.293-.107-.507-.16-.72.16-.213.32-.827 1.04-.987 1.253-.173.213-.347.24-.653.08-.32-.16-1.333-.493-2.547-1.573-.947-.84-1.587-1.88-1.773-2.2-.187-.32-.013-.493.147-.653.147-.147.32-.373.48-.56.16-.187.213-.32.32-.533.107-.213.053-.4-.027-.56-.08-.16-.72-1.733-.987-2.373-.253-.613-.52-.533-.72-.547h-.613c-.213 0-.56.08-.853.4-.293.32-1.12 1.093-1.12 2.667s1.147 3.093 1.307 3.307c.16.213 2.253 3.44 5.467 4.827.76.333 1.36.533 1.827.68.76.24 1.453.213 2 .133.613-.093 1.893-.773 2.16-1.52.267-.747.267-1.387.187-1.52-.08-.133-.293-.213-.613-.373z"/></svg>
+</a>
+
 <footer class="footer">
   <div id="footer-brand" class="footer-brand">…</div>
   <a id="footer-wa-btn" class="footer-wa-btn" href="#" target="_blank" rel="noopener">
@@ -354,35 +760,11 @@
 </footer>
 
 <script>
-/* ═══════════════════════════════════════════════════════════════════
-   CONFIGURACIÓN
-   ───────────────────────────────────────────────────────────────────
-   1. Archivo → Compartir → Publicar en la web → CSV → copiar enlace
-   2. Pegarlo en SHEET_CSV_URL
-
-   ESTRUCTURA DE LA HOJA (fila 1 = encabezados, ignorada):
-   ┌─────────┬───────┬────────────┬──────────────────┬─────────────┬──────────────┬──────────────────────────┐
-   │ tipo    │ clave │ categoria  │ titulo           │ descripcion │ pie_foto     │ foto_url                 │
-   ├─────────┼───────┼────────────┼──────────────────┼─────────────┼──────────────┼──────────────────────────┤
-   │ info    │ nombre_taller │   │ Herrería XYZ     │             │              │                          │
-   │ info    │ propietario   │   │ Juan Pérez       │             │              │                          │
-   │ info    │ telefono      │   │ 809-000-0000     │             │              │                          │
-   │ trabajo │ 1     │ Portones   │ Portón vehicular │ Desc...     │ Pie de foto  │ https://url-de-imagen    │
-   │ trabajo │ 1     │ Portones   │ Vista interior   │ Desc...     │ Detalle...   │ https://url-de-imagen    │
-   │ trabajo │ 2     │ Rejas      │ Reja de ventana  │ Desc...     │ Detalle...   │ https://url-de-imagen    │
-   │ trabajo │ 2     │ Reja de ventana   │ Desc...     │ Pie de foto  │ https://url-de-imagen    │
-   └─────────┴───────┴──────────────────┴─────────────┴──────────────┴──────────────────────────┘
-
-   Filas con la misma CLAVE se agrupan en un solo card.
-   - El card muestra el título/descripción de la PRIMERA fila del grupo.
-   - El carrusel incluye TODAS las fotos del grupo.
-   - Al abrir el lightbox, cada foto muestra su propio título, descripción y pie.
-   - Una foto por fila (columna F). Sin pipes, sin complicaciones.
-   ═══════════════════════════════════════════════════════════════════ */
-
+/* ══════════════════════════════════════════════════════════════════
+   CONFIGURACIÓN — pega tu URL CSV aquí
+   ══════════════════════════════════════════════════════════════════ */
 const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT0EsypMcIaENuPPyaYiEEdf9u40np7EU5tpPdKSD86PYMzs4LPxUg9jA5_Asle8vG3XVUsHFW8nhvb/pub?output=csv';
 
-/* ── CSV parser ─────────────────────────────────────────────────── */
 function parseCSV(text) {
   const lines = text.trim().split(/\r?\n/);
   return lines.slice(1).map(line => {
@@ -402,422 +784,515 @@ function escH(s) {
   return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-/* ── Agrupar filas por clave ────────────────────────────────────── */
 function groupWorks(rows) {
-  const map   = new Map(); // clave → { firstRow, slides[] }
-  const order = [];        // mantiene orden de aparición
-  let   zeroIdx = 0;       // contador para separar filas con clave 0
-
+  const map = new Map(); const order = []; let zeroIdx = 0;
   for (const row of rows) {
     const tipo = (row[0] || '').toLowerCase().trim();
     if (tipo !== 'trabajo') continue;
-
     const rawClave = (row[1] || '').trim();
     if (!rawClave) continue;
-
-    // Clave 0 → cada fila es un proyecto independiente
     const clave = rawClave === '0' ? `0-${zeroIdx++}` : rawClave;
-
-    const slide = {
-      categoria: (row[2] || '').trim(),
-      titulo : row[3] || '',
-      desc   : row[4] || '',
-      pie    : row[5] || '',
-      foto   : (row[6] || '').trim()
-    };
-
-    if (!map.has(clave)) {
-      map.set(clave, { clave, first: slide, slides: [] });
-      order.push(clave);
-    }
+    const slide = { categoria: (row[2]||'').trim(), titulo: row[3]||'', desc: row[4]||'', pie: row[5]||'', foto: (row[6]||'').trim() };
+    if (!map.has(clave)) { map.set(clave, { clave, first: slide, slides: [] }); order.push(clave); }
     if (slide.foto) map.get(clave).slides.push(slide);
   }
-
   return order.map(k => map.get(k));
 }
 
-/* ── Render de un card agrupado ─────────────────────────────────── */
 function renderWork(group, cardNum) {
   const { clave, first, slides } = group;
-  const id   = `car-${clave.replace(/\s+/g,'-')}`;
+  const id = `car-${clave.replace(/\s+/g,'-')}`;
   const isZero = group.clave.startsWith('0-');
   const code = isZero ? '// N/A' : `// PROYECTO-${String(cardNum).padStart(2,'0')}`;
-
   let carouselHTML;
   if (slides.length === 0) {
-    carouselHTML = `
-      <div class="work-carousel">
-        <div class="carousel-track">
-          <div class="carousel-no-img"><span>📷</span><p>Sin fotos aún</p></div>
-        </div>
-      </div>`;
+    carouselHTML = `<div class="work-carousel"><div class="carousel-track"><div class="carousel-no-img"><span>📷</span><p>Sin fotos aún</p></div></div></div>`;
   } else {
-    const slidesHTML = slides.map((s, i) => `
-      <div class="carousel-slide" data-idx="${i}">
-        <img src="${escH(s.foto)}" alt="${escH(s.titulo)}" loading="lazy">
-      </div>`).join('');
-
+    const slidesHTML = slides.map((s, i) => `<div class="carousel-slide" data-idx="${i}"><img src="${escH(s.foto)}" alt="${escH(s.titulo)}" loading="lazy"></div>`).join('');
+    const dotsHTML = slides.length > 1
+      ? `<div class="carousel-dots">${slides.map((_,i) => `<div class="carousel-dot${i===0?' active':''}"></div>`).join('')}</div>` : '';
     const btns = slides.length > 1 ? `
       <button class="carousel-btn prev" data-id="${id}">&#8592;</button>
       <button class="carousel-btn next" data-id="${id}">&#8594;</button>
       <div class="carousel-counter" id="${id}-counter">1 / ${slides.length}</div>` : '';
-
     carouselHTML = `
-      <div class="work-carousel" id="${id}" data-index="0" data-total="${slides.length}" data-iszero="${isZero ? '1' : ''}">
+      <div class="work-carousel" id="${id}" data-index="0" data-total="${slides.length}" data-iszero="${isZero?'1':''}">
         <div class="carousel-track" id="${id}-track">${slidesHTML}</div>
-        ${btns}
+        ${btns}${dotsHTML}
       </div>`;
   }
-
   return `
   <div class="work-item" id="proyecto-${encodeURIComponent(clave)}" data-clave="${escH(clave)}" data-cardnum="${cardNum}">
     ${carouselHTML}
     <div class="work-body">
       <div class="work-code" id="${id}-code">${escH(code)}</div>
-      <div class="work-title" id="${id}-title">${escH(slides[0]?.titulo || '')}</div>
-      <div class="work-desc" id="${id}-desc">${escH(slides[0]?.desc || first.desc)}</div>
-      <div class="work-caption" id="${id}-caption">${escH(slides[0]?.pie || first.pie)}</div>
+      <div class="work-title" id="${id}-title">${escH(slides[0]?.titulo||'')}</div>
+      <div class="work-desc" id="${id}-desc">${escH(slides[0]?.desc||first.desc)}</div>
+      <div class="work-caption" id="${id}-caption">${escH(slides[0]?.pie||first.pie)}</div>
     </div>
   </div>`;
 }
 
-/* ── Carruseles ─────────────────────────────────────────────────── */
-// Mapa global: carouselId → slides[] (para pasar al lightbox)
 const carouselData = {};
 
 function initCarousels(groups) {
-  // Poblar mapa de datos
-  groups.forEach(g => {
-    const id = `car-${g.clave.replace(/\s+/g,'-')}`;
-    carouselData[id] = g.slides;
-  });
+  groups.forEach(g => { carouselData[`car-${g.clave.replace(/\s+/g,'-')}`] = g.slides; });
 
-  // Flechas
+  // Botones flecha
   document.querySelectorAll('.carousel-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const id    = btn.dataset.id;
-      const car   = document.getElementById(id);
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const id = btn.dataset.id;
+      const car = document.getElementById(id);
       const track = document.getElementById(`${id}-track`);
-      let idx     = parseInt(car.dataset.index);
+      let idx = parseInt(car.dataset.index);
       const total = parseInt(car.dataset.total);
       idx = btn.classList.contains('prev') ? (idx - 1 + total) % total : (idx + 1) % total;
       moveCarousel(car, track, id, idx, total);
     });
   });
 
-  // Click → lightbox (abre en la foto visible actualmente)
+  // Swipe + tap en carruseles
   document.querySelectorAll('.work-carousel').forEach(car => {
-    car.querySelector('.carousel-track')?.addEventListener('click', () => {
-      const id     = car.id;
-      const slides = carouselData[id];
-      if (!slides || slides.length === 0) return;
-      const idx    = parseInt(car.dataset.index) || 0;
-      const item       = car.closest('[data-cardnum]');
-      const cardNum    = item ? item.dataset.cardnum : '';
-      const isZero2 = car.dataset.iszero === '1';
-      const projectTitle = isZero2 ? '// N/A' : `// PROYECTO-${String(cardNum).padStart(2,'0')}`;
-      const clave = car.closest('[data-clave]')?.dataset.clave || id.replace('car-', '');
-      openLightbox(slides, projectTitle, idx, clave);
+    let sx = 0, sy = 0, ok = false, moved = false;
+    const track = car.querySelector('.carousel-track');
+    const id = car.id;
+    const total = parseInt(car.dataset.total) || 1;
+
+    car.addEventListener('touchstart', e => {
+      if (e.target.closest('.carousel-btn')) return;
+      sx = e.touches[0].clientX; sy = e.touches[0].clientY; ok = true; moved = false;
+    }, { passive: true });
+    car.addEventListener('touchmove', e => {
+      if (!ok) return;
+      const dx = Math.abs(e.touches[0].clientX - sx);
+      const dy = Math.abs(e.touches[0].clientY - sy);
+      if (dy > dx) { ok = false; return; }
+      if (dx > 6) moved = true;
+    }, { passive: true });
+    car.addEventListener('touchend', e => {
+      if (!ok) return;
+      const dx = e.changedTouches[0].clientX - sx;
+      if (!moved) {
+        openFromCarousel(car, id);
+      } else if (Math.abs(dx) >= 40) {
+        let idx = parseInt(car.dataset.index);
+        if (dx < 0 && idx < total - 1) idx++;
+        else if (dx > 0 && idx > 0) idx--;
+        moveCarousel(car, track, id, idx, total);
+      }
+      ok = false;
+    }, { passive: true });
+
+    // Click (desktop) — solo imagen, no botones
+    track.addEventListener('click', e => {
+      if (e.target.closest('.carousel-btn')) return;
+      openFromCarousel(car, id);
     });
   });
-
 }
 
+function openFromCarousel(car, id) {
+  const slides = carouselData[id];
+  if (!slides || !slides.length) return;
+  const idx = parseInt(car.dataset.index) || 0;
+  const item = car.closest('[data-cardnum]');
+  const cardNum = item ? item.dataset.cardnum : '';
+  const isZ = car.dataset.iszero === '1';
+  const title = isZ ? '// N/A' : `// PROYECTO-${String(cardNum).padStart(2,'0')}`;
+  const clave = car.closest('[data-clave]')?.dataset.clave || id.replace('car-','');
+  openLightbox(slides, title, idx, clave);
+}
 
 function moveCarousel(car, track, id, idx, total) {
   car.dataset.index = idx;
   track.style.transform = `translateX(-${idx * 100}%)`;
   const counter = document.getElementById(`${id}-counter`);
   if (counter) counter.textContent = `${idx + 1} / ${total}`;
-  // Actualizar texto del card según la foto visible
-  const slides  = carouselData[id];
-  const caption = document.getElementById(`${id}-caption`);
-  const titleEl = document.getElementById(`${id}-title`);
-  const descEl  = document.getElementById(`${id}-desc`);
-  const codeEl  = document.getElementById(`${id}-code`);
+  car.querySelectorAll('.carousel-dot').forEach((d,i) => d.classList.toggle('active', i===idx));
+  const slides = carouselData[id];
   if (slides && slides[idx]) {
-    if (titleEl)  titleEl.textContent  = slides[idx].titulo || '';
-    if (descEl)   descEl.textContent   = slides[idx].desc   || '';
-    if (caption)  caption.textContent  = slides[idx].pie    || '';
+    const t = document.getElementById(`${id}-title`);
+    const d = document.getElementById(`${id}-desc`);
+    const c = document.getElementById(`${id}-caption`);
+    if (t) t.textContent = slides[idx].titulo || '';
+    if (d) d.textContent = slides[idx].desc   || '';
+    if (c) c.textContent = slides[idx].pie    || '';
   }
+  const codeEl = document.getElementById(`${id}-code`);
   if (codeEl) {
-    const item   = car.closest('[data-cardnum]');
-    const num    = item ? item.dataset.cardnum : '';
-    const isCero = car.dataset.iszero === '1';
-    codeEl.textContent = isCero ? '// N/A' : `// PROYECTO-${String(num).padStart(2,'0')}`;
+    const item = car.closest('[data-cardnum]');
+    const num = item ? item.dataset.cardnum : '';
+    codeEl.textContent = car.dataset.iszero==='1' ? '// N/A' : `// PROYECTO-${String(num).padStart(2,'0')}`;
   }
 }
 
-/* ── Lightbox ───────────────────────────────────────────────────── */
-let lbSlides  = [];   // array de { titulo, desc, pie, foto }
-let lbCurrent = 0;
-let lbClave   = '';   // clave del proyecto abierto
+/* ── Lightbox ── */
+let lbSlides = [], lbCurrent = 0, lbClave = '', lbFromCat = false, lbScrollY = 0, lbCatOverlay = null;
 
-function openLightbox(slides, projectTitle, startIdx, clave) {
-  lbSlides  = slides;
-  lbCurrent = startIdx;
-  lbClave   = clave || '';
+function openLightbox(slides, projectTitle, startIdx, clave, catOverlay) {
+  lbSlides = slides; lbCurrent = startIdx; lbClave = clave || '';
+  lbFromCat = !clave;
+  lbCatOverlay = catOverlay || null;
+  lbScrollY = window.scrollY;
   document.getElementById('lb-project-title').textContent = projectTitle;
   buildDots();
   showLbSlide(lbCurrent, false);
   document.getElementById('lightbox').classList.add('open');
   document.body.style.overflow = 'hidden';
-  if (lbClave) history.replaceState(null, '', '#proyecto-' + encodeURIComponent(lbClave));
+  if (lbClave) history.replaceState(null,'','#proyecto-'+encodeURIComponent(lbClave));
 }
 
 function closeLightbox() {
   document.getElementById('lightbox').classList.remove('open');
-  document.body.style.overflow = '';
-  history.replaceState(null, '', window.location.pathname + window.location.search);
+  const img = document.getElementById('lb-img');
+  img.style.transition = 'none';
+  img.style.transform = '';
+  history.replaceState(null,'',window.location.pathname+window.location.search);
+
+  if (lbCatOverlay) {
+    // Vino de categoría → reabrir el overlay, mantener scroll bloqueado
+    document.body.style.overflow = 'hidden';
+    lbCatOverlay.classList.add('open');
+    lbCatOverlay = null;
+  } else {
+    // Vino de proyecto → restaurar scroll donde estaba
+    document.body.style.overflow = '';
+    window.scrollTo({ top: lbScrollY, behavior: 'instant' });
+  }
 }
 
 function showLbSlide(idx, animate) {
   const slide = lbSlides[idx];
-  const img   = document.getElementById('lb-img');
-  const elT   = document.getElementById('lb-slide-title');
-  const elD   = document.getElementById('lb-slide-desc');
-  const elC   = document.getElementById('lb-slide-caption');
+  const img = document.getElementById('lb-img');
+  const elT = document.getElementById('lb-slide-title');
+  const elD = document.getElementById('lb-slide-desc');
+  const elC = document.getElementById('lb-slide-caption');
 
-  if (animate) {
-    img.classList.add('fading');
-    elT.classList.add('fading'); elD.classList.add('fading'); elC.classList.add('fading');
-    setTimeout(() => {
-      img.src      = slide.foto;
-      elT.textContent = slide.titulo;
-      elD.textContent = slide.desc;
-      elC.textContent = slide.pie;
-      img.classList.remove('fading');
-      elT.classList.remove('fading'); elD.classList.remove('fading'); elC.classList.remove('fading');
-    }, 180);
-  } else {
-    img.src         = slide.foto;
-    elT.textContent = slide.titulo;
-    elD.textContent = slide.desc;
-    elC.textContent = slide.pie;
+  // Si viene de categoría, actualizar el título con el proyecto de esta foto
+  if (lbFromCat && slide._cardNum !== undefined) {
+    const projLabel = slide._clave && slide._clave.startsWith('0-')
+      ? '// N/A'
+      : `// PROYECTO-${String(slide._cardNum).padStart(2,'0')}`;
+    document.getElementById('lb-project-title').textContent = projLabel;
   }
 
-  document.getElementById('lb-counter-top').textContent = `${idx + 1} / ${lbSlides.length}`;
-  document.getElementById('lb-prev').disabled = (idx === 0);
-  document.getElementById('lb-next').disabled = (idx === lbSlides.length - 1);
-  document.querySelectorAll('.lb-dot').forEach((d,i) => d.classList.toggle('active', i === idx));
+  if (animate) {
+    img.classList.add('fading'); elT.classList.add('fading'); elD.classList.add('fading'); elC.classList.add('fading');
+    setTimeout(() => {
+      img.src = slide.foto; elT.textContent = slide.titulo; elD.textContent = slide.desc; elC.textContent = slide.pie;
+      img.classList.remove('fading'); elT.classList.remove('fading'); elD.classList.remove('fading'); elC.classList.remove('fading');
+    }, 180);
+  } else {
+    img.src = slide.foto; elT.textContent = slide.titulo; elD.textContent = slide.desc; elC.textContent = slide.pie;
+  }
+  document.getElementById('lb-counter-top').textContent = `${idx+1} / ${lbSlides.length}`;
+  const p = document.getElementById('lb-prev'); const n = document.getElementById('lb-next');
+  if (p) p.disabled = (idx===0); if (n) n.disabled = (idx===lbSlides.length-1);
+  document.querySelectorAll('.lb-dot').forEach((d,i) => d.classList.toggle('active', i===idx));
   lbCurrent = idx;
 }
 
 function buildDots() {
   const wrap = document.getElementById('lb-dots');
-  wrap.innerHTML = lbSlides.map((_,i) =>
-    `<div class="lb-dot${i===lbCurrent?' active':''}" data-i="${i}"></div>`).join('');
-  wrap.querySelectorAll('.lb-dot').forEach(d =>
-    d.addEventListener('click', () => showLbSlide(parseInt(d.dataset.i), true)));
+  if (lbSlides.length <= 20) {
+    wrap.innerHTML = lbSlides.map((_,i) => `<div class="lb-dot${i===lbCurrent?' active':''}" data-i="${i}"></div>`).join('');
+    wrap.querySelectorAll('.lb-dot').forEach(d => d.addEventListener('click', () => showLbSlide(parseInt(d.dataset.i), true)));
+  } else { wrap.innerHTML = ''; }
 }
 
-/* ── Share helpers ──────────────────────────────────────────────── */
+function initLightboxSwipe() {
+  const main = document.getElementById('lb-main');
+  const img  = document.getElementById('lb-img');
+
+  // ── Estado zoom ──
+  let scale = 1, originX = 0, originY = 0, panX = 0, panY = 0;
+  let lastTap = 0;
+
+  function applyTransform(animate) {
+    img.style.transition = animate ? 'transform 0.25s ease' : 'none';
+    img.style.transform  = `translate(${panX}px, ${panY}px) scale(${scale})`;
+  }
+  function resetZoom(animate) {
+    scale = 1; panX = 0; panY = 0;
+    applyTransform(animate);
+  }
+
+  // Clamp pan para que la imagen no salga de vista
+  function clampPan() {
+    const rect = img.getBoundingClientRect();
+    const pw = main.clientWidth;
+    const ph = main.clientHeight;
+    const overX = Math.max(0, (rect.width  - pw) / 2);
+    const overY = Math.max(0, (rect.height - ph) / 2);
+    panX = Math.max(-overX, Math.min(overX, panX));
+    panY = Math.max(-overY, Math.min(overY, panY));
+  }
+
+  // Resetear zoom al cambiar de slide
+  const origShowLbSlide = showLbSlide;
+  showLbSlide = function(idx, animate) {
+    resetZoom(false);
+    origShowLbSlide(idx, animate);
+  };
+
+  // ── Touch handlers ──
+  let touches = [];
+  let startDist = 0, startScale = 1;
+  let startPanX = 0, startPanY = 0;
+  let startMidX = 0, startMidY = 0;
+  let swipeOk = false, didPinch = false, didPan = false;
+  let touchSX = 0, touchSY = 0;
+  let dirLocked = null; // 'h' = horizontal, 'v' = vertical, null = sin decidir
+
+  main.addEventListener('touchstart', e => {
+    touches = Array.from(e.touches);
+    didPinch = false; didPan = false; dirLocked = null;
+
+    if (touches.length === 1) {
+      touchSX = touches[0].clientX;
+      touchSY = touches[0].clientY;
+      startPanX = panX; startPanY = panY;
+      swipeOk = true;
+
+      // Doble tap → zoom 2.5x / reset
+      const now = Date.now();
+      if (now - lastTap < 300) {
+        if (scale > 1) { resetZoom(true); }
+        else {
+          scale = 2.5;
+          const rect = img.getBoundingClientRect();
+          originX = touches[0].clientX - rect.left - rect.width  / 2;
+          originY = touches[0].clientY - rect.top  - rect.height / 2;
+          panX = -originX * (scale - 1) / scale;
+          panY = -originY * (scale - 1) / scale;
+          clampPan();
+          applyTransform(true);
+        }
+        lastTap = 0; swipeOk = false; return;
+      }
+      lastTap = now;
+    }
+
+    if (touches.length === 2) {
+      swipeOk = false; dirLocked = null;
+      const dx = touches[1].clientX - touches[0].clientX;
+      const dy = touches[1].clientY - touches[0].clientY;
+      startDist  = Math.hypot(dx, dy);
+      startScale = scale;
+      startMidX  = (touches[0].clientX + touches[1].clientX) / 2;
+      startMidY  = (touches[0].clientY + touches[1].clientY) / 2;
+      startPanX  = panX; startPanY = panY;
+    }
+  }, { passive: true });
+
+  main.addEventListener('touchmove', e => {
+    touches = Array.from(e.touches);
+
+    // ── Pinch zoom (2 dedos) ──
+    if (touches.length === 2) {
+      e.preventDefault();
+      const dx = touches[1].clientX - touches[0].clientX;
+      const dy = touches[1].clientY - touches[0].clientY;
+      const dist = Math.hypot(dx, dy);
+      scale = Math.max(1, Math.min(5, startScale * dist / startDist));
+      const midX = (touches[0].clientX + touches[1].clientX) / 2;
+      const midY = (touches[0].clientY + touches[1].clientY) / 2;
+      panX = startPanX + (midX - startMidX);
+      panY = startPanY + (midY - startMidY);
+      clampPan();
+      applyTransform(false);
+      didPinch = true;
+      return;
+    }
+
+    if (touches.length === 1 && swipeOk) {
+      const dx = touches[0].clientX - touchSX;
+      const dy = touches[0].clientY - touchSY;
+
+      // ── Pan dentro del zoom ──
+      if (scale > 1) {
+        e.preventDefault();
+        panX = startPanX + dx;
+        panY = startPanY + dy;
+        clampPan();
+        applyTransform(false);
+        didPan = true;
+        return;
+      }
+
+      // ── Sin zoom: decidir dirección en el primer movimiento notable ──
+      if (!dirLocked && (Math.abs(dx) > 6 || Math.abs(dy) > 6)) {
+        dirLocked = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v';
+      }
+
+      if (dirLocked === 'h') {
+        e.preventDefault(); // bloquear scroll mientras desliza horizontal
+      }
+      // Si dirLocked === 'v', no hacemos nada → el browser hace scroll normalmente
+      if (dirLocked === 'v') {
+        swipeOk = false;
+      }
+    }
+  }, { passive: false });
+
+  main.addEventListener('touchend', e => {
+    if (didPinch || didPan) { didPinch = false; didPan = false; dirLocked = null; return; }
+    if (!swipeOk || dirLocked !== 'h') { swipeOk = false; dirLocked = null; return; }
+
+    const dx = e.changedTouches[0].clientX - touchSX;
+    if (Math.abs(dx) > 50 && scale === 1) {
+      if (dx < 0 && lbCurrent < lbSlides.length - 1) showLbSlide(lbCurrent + 1, true);
+      else if (dx > 0 && lbCurrent > 0)               showLbSlide(lbCurrent - 1, true);
+    }
+    swipeOk = false; dirLocked = null;
+  }, { passive: true });
+
+  // Las flechas (lb-prev / lb-next) se conectan en initLightbox
+  // Las zonas táctiles están desactivadas (display:none)
+}
+
 function showToast(msg) {
   const t = document.getElementById('lb-toast');
-  t.textContent = msg;
-  t.classList.add('show');
+  t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2500);
 }
-
 function copyToClipboard(text) {
-  // Intenta clipboard API moderna, si falla usa execCommand
   if (navigator.clipboard && window.isSecureContext) {
-    navigator.clipboard.writeText(text).then(() => {
-      showToast('✓ ENLACE COPIADO AL PORTAPAPELES');
-    }).catch(() => fallbackCopy(text));
-  } else {
-    fallbackCopy(text);
-  }
+    navigator.clipboard.writeText(text).then(() => showToast('✓ ENLACE COPIADO')).catch(() => fallbackCopy(text));
+  } else { fallbackCopy(text); }
 }
-
 function fallbackCopy(text) {
-  const ta = document.createElement('textarea');
-  ta.value = text;
+  const ta = document.createElement('textarea'); ta.value = text;
   ta.style.cssText = 'position:fixed;left:-9999px;top:-9999px;opacity:0';
-  document.body.appendChild(ta);
-  ta.focus(); ta.select();
-  try {
-    document.execCommand('copy');
-    showToast('✓ ENLACE COPIADO AL PORTAPAPELES');
-  } catch(e) {
-    showToast('⚠ NO SE PUDO COPIAR');
-  }
+  document.body.appendChild(ta); ta.focus(); ta.select();
+  try { document.execCommand('copy'); showToast('✓ ENLACE COPIADO'); } catch(e) { showToast('⚠ NO SE PUDO COPIAR'); }
   document.body.removeChild(ta);
 }
-
 function shareData(data) {
-  if (navigator.share) {
-    navigator.share(data).catch(() => copyToClipboard(data.url || data.text || ''));
-  } else {
-    copyToClipboard(data.url || data.text || '');
-  }
+  if (navigator.share) { navigator.share(data).catch(() => copyToClipboard(data.url||data.text||'')); }
+  else { copyToClipboard(data.url||data.text||''); }
 }
 
 function initLightbox() {
   document.getElementById('lb-close').addEventListener('click', closeLightbox);
-  document.getElementById('lb-prev').addEventListener('click', () => { if (lbCurrent > 0) showLbSlide(lbCurrent - 1, true); });
-  document.getElementById('lb-next').addEventListener('click', () => { if (lbCurrent < lbSlides.length - 1) showLbSlide(lbCurrent + 1, true); });
+  document.getElementById('lb-back-btn').addEventListener('click', closeLightbox);
+  const pB = document.getElementById('lb-prev'); const nB = document.getElementById('lb-next');
+  if (pB) pB.addEventListener('click', () => { if (lbCurrent>0) showLbSlide(lbCurrent-1, true); });
+  if (nB) nB.addEventListener('click', () => { if (lbCurrent<lbSlides.length-1) showLbSlide(lbCurrent+1, true); });  initLightboxSwipe();
 
-  // Share button toggle menu
-  const shareBtn  = document.getElementById('lb-share-btn');
+  const shareBtn = document.getElementById('lb-share-btn');
   const shareMenu = document.getElementById('lb-share-menu');
-  shareBtn.addEventListener('click', e => {
-    e.stopPropagation();
-    shareMenu.classList.toggle('open');
-  });
-
-  // Close share menu on outside click
-  document.addEventListener('click', () => shareMenu.classList.remove('open'));
-
-  // Share via WhatsApp — siempre la imagen actual
-  document.getElementById('share-whatsapp').addEventListener('click', () => {
-    shareMenu.classList.remove('open');
-    const slide = lbSlides[lbCurrent];
-    if (!slide) return;
-    const link  = window.location.href.split('#')[0] + '#proyecto-' + encodeURIComponent(lbClave) + '-foto-' + (lbCurrent + 1);
-    const msg   = encodeURIComponent(' *' + slide.titulo + '*' + (slide.desc ? '\n' + slide.desc : '') + '\n\n' + link);
-    const phone = (window._tallerTelefono || '').replace(/\D/g, '');
-    if (!phone) { showToast('⚠ TELÉFONO NO CONFIGURADO'); return; }
-    window.open('https://wa.me/' + phone + '?text=' + msg, '_blank');
-  });
+  const backdrop = document.getElementById('share-backdrop');
+  function openShare() { shareMenu.classList.add('open'); backdrop.classList.add('open'); }
+  function closeShare() { shareMenu.classList.remove('open'); backdrop.classList.remove('open'); }
+  shareBtn.addEventListener('click', e => { e.stopPropagation(); openShare(); });
+  backdrop.addEventListener('click', closeShare);
   shareMenu.addEventListener('click', e => e.stopPropagation());
 
-  // Share project (link to project via hash)
+  document.getElementById('share-whatsapp').addEventListener('click', () => {
+    closeShare();
+    const slide = lbSlides[lbCurrent]; if (!slide) return;
+    const link = window.location.href.split('#')[0]+'#proyecto-'+encodeURIComponent(lbClave)+'-foto-'+(lbCurrent+1);
+    const msg = encodeURIComponent(' *'+slide.titulo+'*'+(slide.desc?'\n'+slide.desc:'')+'\n\n'+link);
+    const phone = (window._tallerTelefono||'').replace(/\D/g,'');
+    if (!phone) { showToast('⚠ TELÉFONO NO CONFIGURADO'); return; }
+    window.open('https://wa.me/'+phone+'?text='+msg, '_blank');
+  });
   document.getElementById('share-project').addEventListener('click', () => {
-    shareMenu.classList.remove('open');
+    closeShare();
     const title = document.getElementById('lb-project-title').textContent;
-    const link  = window.location.href.split('#')[0] + '#proyecto-' + encodeURIComponent(lbClave);
-    shareData({ title: title, text: ' ' + title, url: link });
-    showToast('✓ ENLACE DEL PROYECTO COPIADO');
+    const link = window.location.href.split('#')[0]+'#proyecto-'+encodeURIComponent(lbClave);
+    shareData({ title, text: title, url: link });
   });
-
-  // Share current image (link to project + foto index)
   document.getElementById('share-image').addEventListener('click', () => {
-    shareMenu.classList.remove('open');
-    const slide = lbSlides[lbCurrent];
-    if (!slide) return;
+    closeShare();
+    const slide = lbSlides[lbCurrent]; if (!slide) return;
     const title = slide.titulo || document.getElementById('lb-project-title').textContent;
-    const link  = window.location.href.split('#')[0] + '#proyecto-' + encodeURIComponent(lbClave) + '-foto-' + (lbCurrent + 1);
-    shareData({ title: title, text: title, url: link });
-    showToast('✓ ENLACE DE LA IMAGEN COPIADO');
+    const link = window.location.href.split('#')[0]+'#proyecto-'+encodeURIComponent(lbClave)+'-foto-'+(lbCurrent+1);
+    shareData({ title, text: title, url: link });
   });
-
-  document.getElementById('lightbox').addEventListener('click', e => {
-    if (e.target.id === 'lightbox') closeLightbox();
-  });
-
+  document.getElementById('lightbox').addEventListener('click', e => { if (e.target.id==='lightbox') closeLightbox(); });
   document.addEventListener('keydown', e => {
     if (!document.getElementById('lightbox').classList.contains('open')) return;
-    if (e.key === 'Escape') closeLightbox();
-    if (e.key === 'ArrowLeft'  && lbCurrent > 0) showLbSlide(lbCurrent - 1, true);
-    if (e.key === 'ArrowRight' && lbCurrent < lbSlides.length - 1) showLbSlide(lbCurrent + 1, true);
+    if (e.key==='Escape') closeLightbox();
+    if (e.key==='ArrowLeft' && lbCurrent>0) showLbSlide(lbCurrent-1, true);
+    if (e.key==='ArrowRight' && lbCurrent<lbSlides.length-1) showLbSlide(lbCurrent+1, true);
   });
-
 }
 
-/* ── Helpers ────────────────────────────────────────────────────── */
 function showError(msg) { const el = document.getElementById('error-banner'); el.innerHTML = msg; el.style.display = 'block'; hideLoader(); }
 function hideLoader() { const l = document.getElementById('loading-screen'); l.classList.add('hidden'); setTimeout(() => l.remove(), 500); }
 
-/* ── Carga principal ─────────────────────────────────────────────── */
 async function loadData() {
   if (!SHEET_CSV_URL || SHEET_CSV_URL === 'PEGA_AQUI_TU_URL_CSV') {
-    showError(`⚠️ <strong>URL de Google Sheets no configurada.</strong><br>
-      Abre el HTML, busca <code>SHEET_CSV_URL</code> y pega tu URL de CSV publicado.<br>
-      <em>Archivo → Publicar en la web → CSV → copiar enlace.</em>`);
-    return;
+    showError(`⚠️ <strong>URL de Google Sheets no configurada.</strong>`); return;
   }
-
-  const PROXY = 'https://corsproxy.io/?';
-  const bust  = `&_t=${Date.now()}`;
-  const url   = PROXY + encodeURIComponent(SHEET_CSV_URL + bust);
-
+  const url = 'https://corsproxy.io/?' + encodeURIComponent(SHEET_CSV_URL + `&_t=${Date.now()}`);
   try {
     const resp = await fetch(url);
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    const text = await resp.text();
-    const rows = parseCSV(text);
-
-    // Info del taller
+    const rows = parseCSV(await resp.text());
     const info = {};
     for (const row of rows) {
-      if ((row[0]||'').toLowerCase().trim() === 'info') {
-        info[(row[1]||'').trim()] = row[2] || '';
-      }
+      if ((row[0]||'').toLowerCase().trim()==='info') info[(row[1]||'').trim()] = row[2]||'';
     }
-
     const nombre = info['nombre_taller'] || '[ Nombre del Taller ]';
-    document.getElementById('taller-nombre').textContent      = nombre;
+    document.getElementById('taller-nombre').textContent = nombre;
     const tn2 = document.getElementById('taller-nombre2'); if (tn2) tn2.textContent = nombre;
     document.getElementById('taller-propietario').textContent = info['propietario'] || '—';
-    document.getElementById('taller-telefono').textContent    = info['telefono']    || '—';
-    // Guardar teléfono globalmente para WhatsApp
-    window._tallerTelefono = (info['telefono'] || '').replace(/\D/g, '');
+    document.getElementById('taller-telefono').textContent = info['telefono'] || '—';
+    window._tallerTelefono = (info['telefono']||'').replace(/\D/g,'');
     const waLabel = document.getElementById('wa-num-label');
     if (waLabel && info['telefono']) waLabel.textContent = info['telefono'];
-    document.getElementById('footer-brand').textContent       = 'Taller ' + nombre;
-    // Botón WA del footer
-    const footerWa = document.getElementById('footer-wa-btn');
-    if (footerWa && window._tallerTelefono) {
-      const msgBase = encodeURIComponent('Hola, vi tu portafolio y me interesa contactarme contigo.');
-      footerWa.href = 'https://wa.me/' + window._tallerTelefono + '?text=' + msgBase;
-    }
+    document.getElementById('footer-brand').textContent = 'Taller ' + nombre;
     document.title = `Portafolio — ${nombre}`;
 
-    // Agrupar y renderizar trabajos
-    const groups    = groupWorks(rows);
-    const container = document.getElementById('works-container');
-
-    if (groups.length === 0) {
-      container.innerHTML = '<p style="color:var(--muted);font-size:13px;padding:1rem 0">No se encontraron trabajos en la hoja.</p>';
-    } else {
-      container.innerHTML = groups.map((g, i) => renderWork(g, i + 1)).join('');
-      initCarousels(groups);
+    if (window._tallerTelefono) {
+      const msgB = encodeURIComponent('Hola, vi tu portafolio y me interesa contactarme contigo.');
+      const waH = 'https://wa.me/'+window._tallerTelefono+'?text='+msgB;
+      const fw = document.getElementById('footer-wa-btn'); if (fw) fw.href = waH;
+      const fab = document.getElementById('wa-fab'); if (fab) fab.href = waH;
     }
 
+    const groups = groupWorks(rows);
+    const container = document.getElementById('works-container');
+    if (groups.length === 0) {
+      container.innerHTML = '<p style="color:var(--muted);font-size:13px;padding:1rem 0">No se encontraron trabajos.</p>';
+    } else {
+      container.innerHTML = groups.map((g, i) => renderWork(g, i+1)).join('');
+      initCarousels(groups);
+    }
     initLightbox();
     renderCategories(groups);
     handleHashNavigation(groups);
     hideLoader();
-
   } catch (err) {
-    showError(`❌ <strong>No se pudo cargar la hoja de Google Sheets.</strong><br>
-      Verifica que la URL sea correcta y que la hoja esté publicada como CSV.<br>
-      <small>Error: ${escH(err.message)}</small>`);
+    showError(`❌ <strong>No se pudo cargar la hoja.</strong> Verifica que esté publicada como CSV.<br><small>${escH(err.message)}</small>`);
   }
 }
 
-/* ── Navegar a proyecto por hash al cargar ──────────────────────── */
 function handleHashNavigation(groups) {
   const hash = decodeURIComponent(window.location.hash);
   const m = hash.match(/^#proyecto-(.+?)(?:-foto-(\d+))?$/);
   if (!m) return;
-  const clave  = m[1];
-  const fotoIdx = m[2] ? parseInt(m[2]) - 1 : 0;
-  const group  = groups.find(g => g.clave === clave);
-  if (!group || group.slides.length === 0) return;
-  const idx = Math.min(fotoIdx, group.slides.length - 1);
-  // Scroll al card
-  const el = document.getElementById('proyecto-' + encodeURIComponent(clave));
+  const clave = m[1]; const fotoIdx = m[2] ? parseInt(m[2])-1 : 0;
+  const group = groups.find(g => g.clave === clave);
+  if (!group || !group.slides.length) return;
+  const idx = Math.min(fotoIdx, group.slides.length-1);
+  const el = document.getElementById('proyecto-'+encodeURIComponent(clave));
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  // Abrir lightbox en esa foto
-  const el2     = document.getElementById('proyecto-' + encodeURIComponent(clave));
-  const cardNum = el2 ? el2.dataset.cardnum : '';
-  const isCeroHash = (el2?.dataset.clave || '').startsWith('0-');
-  const projTitle = isCeroHash ? '// N/A' : (cardNum ? `// PROYECTO-${String(cardNum).padStart(2,'0')}` : clave);
+  const cardNum = el ? el.dataset.cardnum : '';
+  const isZ = (el?.dataset.clave||'').startsWith('0-');
+  const projTitle = isZ ? '// N/A' : (cardNum ? `// PROYECTO-${String(cardNum).padStart(2,'0')}` : clave);
   setTimeout(() => openLightbox(group.slides, projTitle, idx, clave), 400);
 }
 
-/* ── Categorías ─────────────────────────────────────────────────── */
 function renderCategories(groups) {
   const allSlides = [];
-  groups.forEach(g => {
-    g.slides.forEach((s, si) => {
-      if (s.foto) allSlides.push({ ...s, _clave: g.clave, _slideIdx: si, _cardNum: groups.indexOf(g) + 1 });
-    });
-  });
-
-  // Agrupar por categoría
+  groups.forEach(g => g.slides.forEach((s, si) => {
+    if (s.foto) allSlides.push({ ...s, _clave: g.clave, _slideIdx: si, _cardNum: groups.indexOf(g)+1 });
+  }));
   const catMap = new Map();
   allSlides.forEach(s => {
     const cat = s.categoria || '—';
@@ -825,75 +1300,56 @@ function renderCategories(groups) {
     catMap.get(cat).push(s);
   });
 
-  const foldersEl  = document.getElementById('cat-folders');
-  const panelEl    = document.getElementById('cat-panel');
+  const foldersEl = document.getElementById('cat-folders');
+  const panelEl = document.getElementById('cat-panel');
   const panelTitle = document.getElementById('cat-panel-title');
-  const photoGrid  = document.getElementById('cat-photo-grid');
-  const backBtn    = document.getElementById('cat-panel-back');
-  const overlay    = document.getElementById('cat-overlay');
+  const photoGrid = document.getElementById('cat-photo-grid');
+  const backBtn = document.getElementById('cat-panel-back');
+  const overlay = document.getElementById('cat-overlay');
 
-  // Renderizar carpetas (foto de portada + nombre + cantidad)
   foldersEl.innerHTML = [...catMap.entries()].map(([cat, slides]) => `
     <div class="cat-folder" data-cat="${escH(cat)}">
-      <div class="cat-folder-cover">
-        <img src="${escH(slides[0].foto)}" alt="${escH(cat)}" loading="lazy">
-      </div>
+      <div class="cat-folder-cover"><img src="${escH(slides[0].foto)}" alt="${escH(cat)}" loading="lazy"></div>
       <div class="cat-folder-info">
         <div class="cat-folder-name">${escH(cat)}</div>
-        <div class="cat-folder-count">${slides.length} foto${slides.length !== 1 ? 's' : ''}</div>
+        <div class="cat-folder-count">${slides.length} foto${slides.length!==1?'s':''}</div>
       </div>
     </div>`).join('');
 
-  // Click en carpeta → mostrar fotos
   foldersEl.addEventListener('click', e => {
-    const folder = e.target.closest('.cat-folder');
-    if (!folder) return;
-    const cat    = folder.dataset.cat;
-    const slides = catMap.get(cat) || [];
+    const folder = e.target.closest('.cat-folder'); if (!folder) return;
+    const cat = folder.dataset.cat; const slides = catMap.get(cat)||[];
     panelTitle.textContent = cat;
-    photoGrid.innerHTML = slides.map(s => `
-      <div class="cat-photo" data-clave="${escH(s._clave)}" data-idx="${s._slideIdx}">
+    photoGrid.innerHTML = slides.map((s, i) => `
+      <div class="cat-photo" data-cat-idx="${i}">
         <img src="${escH(s.foto)}" alt="${escH(s.titulo)}" loading="lazy">
         <div class="cat-photo-overlay">
           <div class="cat-photo-title">${escH(s.titulo)}</div>
-          <div class="cat-photo-proj">${s._clave.startsWith('0-') ? '// N/A' : `// PROYECTO-${String(s._cardNum).padStart(2,'0')}`}</div>
+          <div class="cat-photo-proj">${s._clave.startsWith('0-')?'// N/A':`// PROYECTO-${String(s._cardNum).padStart(2,'0')}`}</div>
         </div>
       </div>`).join('');
     photoGrid.querySelectorAll('.cat-photo').forEach(card => {
       card.addEventListener('click', () => {
-        const group = groups.find(g => g.clave === card.dataset.clave);
-        if (!group) return;
-        const cardNum = groups.indexOf(group) + 1;
-        overlay.classList.remove('open');
-        document.body.style.overflow = '';
-        const titleCat = group.clave.startsWith('0-') ? '// N/A' : `// PROYECTO-${String(cardNum).padStart(2,'0')}`;
-        openLightbox(group.slides, titleCat, parseInt(card.dataset.idx), group.clave);
+        const catIdx = parseInt(card.dataset.catIdx);
+        // NO cerrar el overlay — queda vivo detrás del lightbox
+        const catTitle = `// CATEGORÍA: ${cat}`;
+        openLightbox(slides, catTitle, catIdx, '', overlay);
       });
     });
-    foldersEl.style.display = 'none';
-    panelEl.classList.add('open');
+    foldersEl.style.display='none'; panelEl.classList.add('open');
   });
 
-  // Volver a carpetas
-  backBtn.addEventListener('click', () => {
-    panelEl.classList.remove('open');
-    foldersEl.style.display = '';
-  });
+  backBtn.addEventListener('click', () => { panelEl.classList.remove('open'); foldersEl.style.display=''; });
 
-  // Abrir/cerrar overlay
   document.getElementById('cat-open-btn').addEventListener('click', () => {
-    overlay.classList.add('open');
-    document.body.style.overflow = 'hidden';
+    overlay.classList.add('open'); document.body.style.overflow='hidden';
   });
-  function closeCatOverlay() {
-    overlay.classList.remove('open');
-    document.body.style.overflow = '';
-    // Reset al volver
-    panelEl.classList.remove('open');
-    foldersEl.style.display = '';
+  function closeCat() {
+    overlay.classList.remove('open'); document.body.style.overflow='';
+    panelEl.classList.remove('open'); foldersEl.style.display='';
   }
-  document.getElementById('cat-overlay-close').addEventListener('click', closeCatOverlay);
-  overlay.addEventListener('click', e => { if (e.target === overlay) closeCatOverlay(); });
+  document.getElementById('cat-overlay-close').addEventListener('click', closeCat);
+  overlay.addEventListener('click', e => { if (e.target===overlay) closeCat(); });
 }
 
 loadData();
