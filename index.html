@@ -406,13 +406,17 @@ function escH(s) {
 function groupWorks(rows) {
   const map   = new Map(); // clave → { firstRow, slides[] }
   const order = [];        // mantiene orden de aparición
+  let   zeroIdx = 0;       // contador para separar filas con clave 0
 
   for (const row of rows) {
     const tipo = (row[0] || '').toLowerCase().trim();
     if (tipo !== 'trabajo') continue;
 
-    const clave = (row[1] || '').trim();
-    if (!clave) continue;
+    const rawClave = (row[1] || '').trim();
+    if (!rawClave) continue;
+
+    // Clave 0 → cada fila es un proyecto independiente
+    const clave = rawClave === '0' ? `0-${zeroIdx++}` : rawClave;
 
     const slide = {
       categoria: (row[2] || '').trim(),
@@ -436,7 +440,8 @@ function groupWorks(rows) {
 function renderWork(group, cardNum) {
   const { clave, first, slides } = group;
   const id   = `car-${clave.replace(/\s+/g,'-')}`;
-  const code = `// PROYECTO-${String(cardNum).padStart(2,'0')}`;
+  const isZero = group.clave.startsWith('0-');
+  const code = isZero ? '// N/A' : `// PROYECTO-${String(cardNum).padStart(2,'0')}`;
 
   let carouselHTML;
   if (slides.length === 0) {
@@ -458,7 +463,7 @@ function renderWork(group, cardNum) {
       <div class="carousel-counter" id="${id}-counter">1 / ${slides.length}</div>` : '';
 
     carouselHTML = `
-      <div class="work-carousel" id="${id}" data-index="0" data-total="${slides.length}">
+      <div class="work-carousel" id="${id}" data-index="0" data-total="${slides.length}" data-iszero="${isZero ? '1' : ''}">
         <div class="carousel-track" id="${id}-track">${slidesHTML}</div>
         ${btns}
       </div>`;
@@ -509,7 +514,8 @@ function initCarousels(groups) {
       const idx    = parseInt(car.dataset.index) || 0;
       const item       = car.closest('[data-cardnum]');
       const cardNum    = item ? item.dataset.cardnum : '';
-      const projectTitle = `// PROYECTO-${String(cardNum).padStart(2,'0')}`;
+      const isZero2 = car.dataset.iszero === '1';
+      const projectTitle = isZero2 ? '// N/A' : `// PROYECTO-${String(cardNum).padStart(2,'0')}`;
       const clave = car.closest('[data-clave]')?.dataset.clave || id.replace('car-', '');
       openLightbox(slides, projectTitle, idx, clave);
     });
@@ -535,9 +541,10 @@ function moveCarousel(car, track, id, idx, total) {
     if (caption)  caption.textContent  = slides[idx].pie    || '';
   }
   if (codeEl) {
-    const item = car.closest('[data-cardnum]');
-    const num  = item ? item.dataset.cardnum : '';
-    codeEl.textContent = `// PROYECTO-${String(num).padStart(2,'0')}`;
+    const item   = car.closest('[data-cardnum]');
+    const num    = item ? item.dataset.cardnum : '';
+    const isCero = car.dataset.iszero === '1';
+    codeEl.textContent = isCero ? '// N/A' : `// PROYECTO-${String(num).padStart(2,'0')}`;
   }
 }
 
@@ -796,7 +803,8 @@ function handleHashNavigation(groups) {
   // Abrir lightbox en esa foto
   const el2     = document.getElementById('proyecto-' + encodeURIComponent(clave));
   const cardNum = el2 ? el2.dataset.cardnum : '';
-  const projTitle = cardNum ? `// PROYECTO-${String(cardNum).padStart(2,'0')}` : clave;
+  const isCeroHash = (el2?.dataset.clave || '').startsWith('0-');
+  const projTitle = isCeroHash ? '// N/A' : (cardNum ? `// PROYECTO-${String(cardNum).padStart(2,'0')}` : clave);
   setTimeout(() => openLightbox(group.slides, projTitle, idx, clave), 400);
 }
 
@@ -848,7 +856,7 @@ function renderCategories(groups) {
         <img src="${escH(s.foto)}" alt="${escH(s.titulo)}" loading="lazy">
         <div class="cat-photo-overlay">
           <div class="cat-photo-title">${escH(s.titulo)}</div>
-          <div class="cat-photo-proj">// PROYECTO-${String(s._cardNum).padStart(2,'0')}</div>
+          <div class="cat-photo-proj">${s._clave.startsWith('0-') ? '// N/A' : `// PROYECTO-${String(s._cardNum).padStart(2,'0')}`}</div>
         </div>
       </div>`).join('');
     photoGrid.querySelectorAll('.cat-photo').forEach(card => {
@@ -858,7 +866,8 @@ function renderCategories(groups) {
         const cardNum = groups.indexOf(group) + 1;
         overlay.classList.remove('open');
         document.body.style.overflow = '';
-        openLightbox(group.slides, `// PROYECTO-${String(cardNum).padStart(2,'0')}`, parseInt(card.dataset.idx), group.clave);
+        const titleCat = group.clave.startsWith('0-') ? '// N/A' : `// PROYECTO-${String(cardNum).padStart(2,'0')}`;
+        openLightbox(group.slides, titleCat, parseInt(card.dataset.idx), group.clave);
       });
     });
     foldersEl.style.display = 'none';
